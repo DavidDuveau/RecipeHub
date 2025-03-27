@@ -36,7 +36,7 @@ namespace RecipeHub.UI.ViewModels
             NavigateCommand = new DelegateCommand<string>(Navigate);
             
             // Naviguer vers la page d'accueil au démarrage
-            // _regionManager.RequestNavigate("ContentRegion", "HomeView");
+            _regionManager.RequestNavigate("ContentRegion", "HomeView");
         }
         
         /// <summary>

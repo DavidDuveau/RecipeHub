@@ -37,10 +37,14 @@
                 </StackPanel>
                 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Accueil"/>
-                    <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Explorer"/>
-                    <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Favoris"/>
-                    <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Recherche"/>
+                <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Accueil"
+                        Command="{Binding NavigateCommand}" CommandParameter="HomeView"/>
+                    <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Explorer"
+                        Command="{Binding NavigateCommand}" CommandParameter="ExploreView"/>
+                    <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Favoris"
+                        Command="{Binding NavigateCommand}" CommandParameter="FavoritesView"/>
+                    <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Recherche"
+                        Command="{Binding NavigateCommand}" CommandParameter="SearchView"/>
                 </StackPanel>
             </DockPanel>
         </materialDesign:ColorZone>

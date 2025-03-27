@@ -9,6 +9,11 @@
                 <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Teal" SecondaryColor="Orange"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Convertisseurs -->
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:FavoriteIconConverter x:Key="FavoriteIconConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
