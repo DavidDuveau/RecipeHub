@@ -29,10 +29,6 @@
     <Folder Include="Views\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\FavoriteIconConverter.cs" />
-    <Compile Include="Converters\StringToVisibilityConverter.cs" />
-  </ItemGroup>
+  <!-- Les fichiers de convertisseurs sont automatiquement inclus par SDK, pas besoin de les spécifier explicitement -->
 
 </Project>

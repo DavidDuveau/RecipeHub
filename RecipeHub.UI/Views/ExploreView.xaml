@@ -1,0 +1,347 @@
+<UserControl x:Class="RecipeHub.UI.Views.ExploreView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:RecipeHub.UI.Converters"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000">
+
+    <UserControl.Resources>
+        <Style x:Key="CategoryCardStyle" TargetType="materialDesign:Card">
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="200"/>
+            <Setter Property="UniformCornerRadius" Value="4"/>
+        </Style>
+        
+        <Style x:Key="AreaButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}"/>
+        </Style>
+        
+        <Style x:Key="IngredientButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}"/>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- En-tête -->
+        <TextBlock Grid.Row="0" 
+                  Text="Explorer les recettes" 
+                  Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                  Margin="0,0,0,16"/>
+
+        <!-- Message d'erreur -->
+        <materialDesign:Card Grid.Row="1" Margin="0,0,0,16" Padding="8" 
+                            Background="#FFEBEE" 
+                            Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="Alert" Foreground="#F44336" Margin="8" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding ErrorMessage}" 
+                         Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                         Foreground="#F44336"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+        </materialDesign:Card>
+        
+        <!-- Onglets pour les différents modes d'exploration -->
+        <materialDesign:Card Grid.Row="2" Margin="0,0,0,16">
+            <TabControl SelectedIndex="{Binding SelectedTab, Mode=TwoWay, ConverterParameter=categories:0;areas:1;ingredients:2}">
+                <TabItem Header="Catégories">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" 
+                                  Text="Choisissez une catégorie" 
+                                  Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                  Margin="16,16,16,8"/>
+                        
+                        <ScrollViewer Grid.Row="1" 
+                                     VerticalScrollBarVisibility="Auto" 
+                                     HorizontalScrollBarVisibility="Disabled"
+                                     Margin="0,0,0,16">
+                            <ItemsControl ItemsSource="{Binding Categories}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <materialDesign:Card Style="{StaticResource CategoryCardStyle}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                
+                                                <!-- Image de la catégorie -->
+                                                <Image Grid.Row="0" 
+                                                      Source="{Binding Thumbnail}" 
+                                                      Stretch="UniformToFill"/>
+                                                
+                                                <!-- Nom de la catégorie -->
+                                                <materialDesign:ColorZone Grid.Row="1" 
+                                                                       Mode="PrimaryMid" 
+                                                                       Padding="8">
+                                                    <TextBlock Text="{Binding Name}" 
+                                                             TextAlignment="Center"
+                                                             TextWrapping="NoWrap"
+                                                             TextTrimming="CharacterEllipsis"/>
+                                                </materialDesign:ColorZone>
+                                                
+                                                <!-- Bouton invisible pour la sélection -->
+                                                <Button Grid.Row="0" Grid.RowSpan="2"
+                                                      Command="{Binding DataContext.CategorySelectedCommand, 
+                                                               RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                      CommandParameter="{Binding}"
+                                                      Opacity="0"/>
+                                            </Grid>
+                                        </materialDesign:Card>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+                
+                <TabItem Header="Régions">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" 
+                                  Text="Découvrez les cuisines du monde entier" 
+                                  Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                  Margin="16,16,16,8"/>
+                        
+                        <ScrollViewer Grid.Row="1" 
+                                     VerticalScrollBarVisibility="Auto" 
+                                     HorizontalScrollBarVisibility="Disabled"
+                                     Margin="0,0,0,16">
+                            <ItemsControl ItemsSource="{Binding Areas}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource AreaButtonStyle}"
+                                              Content="{Binding}"
+                                              Command="{Binding DataContext.AreaSelectedCommand, 
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                              CommandParameter="{Binding}">
+                                            <Button.ContentTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <materialDesign:PackIcon Kind="Earth" 
+                                                                             Margin="0,0,8,0" 
+                                                                             VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </Button.ContentTemplate>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+                
+                <TabItem Header="Ingrédients">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" 
+                                  Text="Recherchez par ingrédient" 
+                                  Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                  Margin="16,16,16,8"/>
+                        
+                        <TextBox Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="16,0,16,16"
+                                materialDesign:HintAssist.Hint="Filtrer les ingrédients"
+                                Text="{Binding IngredientFilter, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" 
+                                           Command="{Binding FilterIngredientsCommand}"/>
+                            </TextBox.InputBindings>
+                            <TextBox.LeadingIcon>
+                                <materialDesign:PackIcon Kind="Magnify"/>
+                            </TextBox.LeadingIcon>
+                        </TextBox>
+                        
+                        <ScrollViewer Grid.Row="2" 
+                                     VerticalScrollBarVisibility="Auto" 
+                                     HorizontalScrollBarVisibility="Disabled"
+                                     Margin="0,0,0,16">
+                            <ItemsControl ItemsSource="{Binding FilteredIngredients}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource IngredientButtonStyle}"
+                                              Content="{Binding}"
+                                              Command="{Binding DataContext.IngredientSelectedCommand, 
+                                                       RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                              CommandParameter="{Binding}">
+                                            <Button.ContentTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <materialDesign:PackIcon Kind="FoodForkDrink" 
+                                                                             Margin="0,0,8,0" 
+                                                                             VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </Button.ContentTemplate>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </materialDesign:Card>
+        
+        <!-- Liste des recettes filtrées -->
+        <materialDesign:Card Grid.Row="3" Margin="0,0,0,16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" 
+                          Text="{Binding RecipesTitle}" 
+                          Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                          Margin="16,16,16,8"/>
+                
+                <TextBlock Grid.Row="1" 
+                          Text="Sélectionnez une catégorie, une région ou un ingrédient pour voir les recettes" 
+                          Style="{StaticResource MaterialDesignBody1TextBlock}"
+                          Margin="16"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          TextAlignment="Center"
+                          TextWrapping="Wrap"
+                          Visibility="{Binding IsNoRecipesSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                
+                <ScrollViewer Grid.Row="1" 
+                             VerticalScrollBarVisibility="Auto" 
+                             HorizontalScrollBarVisibility="Disabled"
+                             Margin="0,0,0,16"
+                             Visibility="{Binding IsNoRecipesSelected, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                    <ItemsControl ItemsSource="{Binding FilteredRecipes}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <materialDesign:Card Width="220" Margin="8">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="160"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Image de la recette -->
+                                        <Image Grid.Row="0" 
+                                               Source="{Binding Thumbnail}" 
+                                               Stretch="UniformToFill"/>
+                                        
+                                        <!-- Bouton Favoris -->
+                                        <Button Grid.Row="0" 
+                                                Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                                HorizontalAlignment="Right" 
+                                                VerticalAlignment="Top"
+                                                Margin="8"
+                                                Command="{Binding DataContext.ToggleFavoriteCommand, 
+                                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}">
+                                            <materialDesign:PackIcon Kind="{Binding IsFavorite, Converter={StaticResource FavoriteIconConverter}}"/>
+                                        </Button>
+
+                                        <!-- Nom de la recette -->
+                                        <TextBlock Grid.Row="1" 
+                                                   Text="{Binding Name}" 
+                                                   TextWrapping="Wrap"
+                                                   Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                                   Margin="8,8,8,4"/>
+                                        
+                                        <!-- Catégorie et origine -->
+                                        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="8,0,8,8">
+                                            <TextBlock Text="{Binding Category}" 
+                                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                       Opacity="0.6"/>
+                                            <TextBlock Text=" • " 
+                                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                       Opacity="0.6"/>
+                                            <TextBlock Text="{Binding Area}" 
+                                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                       Opacity="0.6"/>
+                                        </StackPanel>
+                                        
+                                        <!-- Bouton invisible pour capturer le clic -->
+                                        <Button Grid.Row="0" Grid.RowSpan="3" 
+                                                Command="{Binding DataContext.ViewRecipeDetailsCommand, 
+                                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                Opacity="0"/>
+                                    </Grid>
+                                </materialDesign:Card>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </materialDesign:Card>
+        
+        <!-- Indicateur de chargement -->
+        <Grid Grid.Row="0" Grid.RowSpan="4" 
+              Background="#80FFFFFF"
+              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ProgressBar IsIndeterminate="True" 
+                         Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                         Width="60" Height="60"/>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -29,7 +29,7 @@ namespace RecipeHub.UI
             // Enregistrement des vues pour la navigation
             // À activer progressivement lors du développement
             containerRegistry.RegisterForNavigation<HomeView>();
-            // containerRegistry.RegisterForNavigation<ExploreView>();
+            containerRegistry.RegisterForNavigation<ExploreView>();
             // containerRegistry.RegisterForNavigation<RecipeDetailsView>();
             // containerRegistry.RegisterForNavigation<FavoritesView>();
             // containerRegistry.RegisterForNavigation<SearchView>();
