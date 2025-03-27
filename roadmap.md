@@ -47,7 +47,7 @@
 - [ ] Développement de la page de recherche avancée
 - [ ] Tests de performance des recherches
 
-## Phase 3: Fonctionnalités Avancées (Semaines 8-10)
+## Phase 3: Fonctionnalités Avancées (Semaines 8-11)
 
 ### Semaine 8: Mode Hors Connexion
 - [ ] Finalisation du système de cache
@@ -67,15 +67,21 @@
 - [ ] Intégration avec les favoris
 - [ ] Tests d'intégration des fonctionnalités de planification
 
-## Phase 4: Polissage et Préparation à la Livraison (Semaines 11-12)
+### Semaine 11: Partage et Exportation
+- [ ] Développement des fonctionnalités de partage via email
+- [ ] Implémentation du partage sur réseaux sociaux
+- [ ] Création du système d'exportation en format PDF et texte
+- [ ] Tests des fonctionnalités de partage et d'exportation
 
-### Semaine 11: Optimisation et Corrections
+## Phase 4: Polissage et Préparation à la Livraison (Semaines 12-13)
+
+### Semaine 12: Optimisation et Corrections
 - [ ] Revue de code complète
 - [ ] Optimisation des performances
 - [ ] Correction des bugs identifiés
 - [ ] Tests de charge et de stress
 
-### Semaine 12: Finalisation
+### Semaine 13: Finalisation
 - [ ] Création de l'assistant de première utilisation
 - [ ] Documentation utilisateur in-app
 - [ ] Création du programme d'installation
@@ -101,9 +107,9 @@
    - Connexion à l'API et stockage local fonctionnels
 
 2. **Beta (Fin de la Phase 3)**
-   - Toutes les fonctionnalités implémentées
+   - Toutes les fonctionnalités principales et secondaires implémentées
    - Mode hors ligne fonctionnel
-   - Personnalisation et options avancées disponibles
+   - Personnalisation, planification de repas et partage disponibles
 
 3. **Release Candidate (Milieu de la Phase 4)**
    - Application stable avec performances optimisées
