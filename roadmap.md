@@ -16,16 +16,18 @@
 - [ ] Tests unitaires des services
 
 ### Semaine 3: Base de l'Interface Utilisateur
-- [ ] Design de la navigation principale
-- [ ] Mise en place des styles et thèmes de base
-- [ ] Création de la page d'accueil (shell)
-- [ ] Configuration du système de navigation entre les vues
+- [x] Design de la navigation principale
+- [x] Mise en place des styles et thèmes de base
+- [x] Création de la page d'accueil (shell)
+- [x] Configuration du système de navigation entre les vues
 
 ## Phase 2: Fonctionnalités Essentielles (Semaines 4-7)
 
 ### Semaine 4: Exploration et Recherche
-- [ ] Développement de la page d'exploration des recettes
-- [ ] Implémentation des filtres par catégorie
+- [x] Développement de la page d'exploration des recettes
+- [x] Implémentation des filtres par catégorie
+- [x] Implémentation des filtres par région
+- [x] Implémentation des filtres par ingrédient
 - [ ] Création de la fonctionnalité de recherche simple
 - [ ] Tests d'intégration des fonctionnalités d'exploration
 

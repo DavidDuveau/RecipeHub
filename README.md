@@ -58,8 +58,14 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
 - [x] Implémentation des services d'accès à l'API
 - [x] Mise en place du système de cache
 - [x] Développement des méthodes principales d'accès aux données
-- [ ] Développement de l'interface utilisateur
 - [x] Mise en place du stockage local (favoris)
+- [ ] Développement de l'interface utilisateur
+  - [x] Interface principale (ShellView)
+  - [x] Page d'accueil (HomeView)
+  - [x] Page d'exploration des recettes (ExploreView)
+  - [ ] Page de détails des recettes (RecipeDetailsView)
+  - [ ] Page des favoris (FavoritesView)
+  - [ ] Page de recherche (SearchView)
 
 ## Roadmap
 
