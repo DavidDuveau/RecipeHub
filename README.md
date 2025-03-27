@@ -55,7 +55,7 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
 - [x] Mise en place de l'architecture MVVM
 - [x] Définition des interfaces principales
 - [x] Création des modèles de données de base
-- [ ] Implémentation des services d'accès à l'API
+- [x] Implémentation des services d'accès à l'API
 - [ ] Développement de l'interface utilisateur
 - [ ] Mise en place du stockage local (favoris)
 

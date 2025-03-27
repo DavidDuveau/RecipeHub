@@ -10,7 +10,7 @@
 - [x] Création des modèles de données de base (Recipe, Category, Ingredient)
 
 ### Semaine 2: Services Core et API
-- [ ] Implémentation du service MealDbService (connexion à l'API)
+- [x] Implémentation du service MealDbService (connexion à l'API)
 - [ ] Mise en place du système de cache
 - [ ] Développement des méthodes principales d'accès aux données
 - [ ] Tests unitaires des services
