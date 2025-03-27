@@ -108,14 +108,14 @@ namespace RecipeHub.Services.API
             if (cachedResults != null)
             {
                 // Récupérer les recettes à partir de leurs identifiants
-                var recipes = new List<Recipe>();
+                var searchRecipes = new List<Recipe>();
                 foreach (var id in cachedResults)
                 {
                     var recipe = await GetRecipeByIdAsync(id);
                     if (recipe != null)
-                        recipes.Add(recipe);
+                        searchRecipes.Add(recipe);
                 }
-                return recipes;
+                return searchRecipes;
             }
 
             // Si pas dans le cache, faire la requête à l'API
@@ -163,7 +163,7 @@ namespace RecipeHub.Services.API
         {
             // Les recettes aléatoires ne sont pas mises en cache car elles doivent 
             // changer à chaque appel
-            var recipes = new List<Recipe>();
+            var randomRecipes = new List<Recipe>();
 
             // L'API gratuite ne permet de récupérer qu'une recette aléatoire à la fois
             // Nous devons donc faire plusieurs appels pour en avoir plusieurs
@@ -187,14 +187,14 @@ namespace RecipeHub.Services.API
                         recipe.IsFavorite = await _favoritesService.IsFavoriteAsync(recipe.Id);
                     }
                     
-                    recipes.Add(recipe);
+                    randomRecipes.Add(recipe);
                     
                     // On profite de l'occasion pour mettre cette recette en cache
                     await _cacheService.SetAsync($"recipe_{recipe.Id}", recipe, RecipeCacheDuration);
                 }
             }
 
-            return recipes;
+            return randomRecipes;
         }
 
         /// <summary>
@@ -256,14 +256,14 @@ namespace RecipeHub.Services.API
             if (cachedResults != null)
             {
                 // Récupérer les recettes à partir de leurs identifiants
-                var categoryRecipes = new List<Recipe>();
+                var catRecipes = new List<Recipe>();
                 foreach (var id in cachedResults)
                 {
                     var recipe = await GetRecipeByIdAsync(id);
                     if (recipe != null)
-                        categoryRecipes.Add(recipe);
+                        catRecipes.Add(recipe);
                 }
-                return categoryRecipes;
+                return catRecipes;
             }
 
             // Si pas dans le cache, faire la requête à l'API
@@ -282,7 +282,7 @@ namespace RecipeHub.Services.API
 
             // Extraire les identifiants et les mettre en cache
             var recipeIds = new List<int>();
-            var categoryRecipes = new List<Recipe>();
+            var categoryResults = new List<Recipe>();
             
             foreach (var mealSummary in result.Meals)
             {
@@ -291,14 +291,14 @@ namespace RecipeHub.Services.API
                     recipeIds.Add(id);
                     var recipeDetails = await GetRecipeByIdAsync(id);
                     if (recipeDetails != null)
-                        categoryRecipes.Add(recipeDetails);
+                        categoryResults.Add(recipeDetails);
                 }
             }
             
             // Sauvegarder les identifiants des recettes dans le cache
             await _cacheService.SetAsync(cacheKey, recipeIds, FilterCacheDuration);
             
-            return categoryRecipes;
+            return categoryResults;
         }
 
         /// <summary>
@@ -354,14 +354,14 @@ namespace RecipeHub.Services.API
             if (cachedResults != null)
             {
                 // Récupérer les recettes à partir de leurs identifiants
-                var areaRecipes = new List<Recipe>();
+                var regionRecipes = new List<Recipe>();
                 foreach (var id in cachedResults)
                 {
                     var recipe = await GetRecipeByIdAsync(id);
                     if (recipe != null)
-                        areaRecipes.Add(recipe);
+                        regionRecipes.Add(recipe);
                 }
-                return areaRecipes;
+                return regionRecipes;
             }
 
             // Si pas dans le cache, faire la requête à l'API
@@ -379,7 +379,7 @@ namespace RecipeHub.Services.API
 
             // Extraire les identifiants et les mettre en cache
             var recipeIds = new List<int>();
-            var areaRecipes = new List<Recipe>();
+            var areaResults = new List<Recipe>();
             
             foreach (var mealSummary in result.Meals)
             {
@@ -388,14 +388,14 @@ namespace RecipeHub.Services.API
                     recipeIds.Add(id);
                     var recipeDetails = await GetRecipeByIdAsync(id);
                     if (recipeDetails != null)
-                        areaRecipes.Add(recipeDetails);
+                        areaResults.Add(recipeDetails);
                 }
             }
             
             // Sauvegarder les identifiants des recettes dans le cache
             await _cacheService.SetAsync(cacheKey, recipeIds, FilterCacheDuration);
             
-            return areaRecipes;
+            return areaResults;
         }
 
         /// <summary>
@@ -451,14 +451,14 @@ namespace RecipeHub.Services.API
             if (cachedResults != null)
             {
                 // Récupérer les recettes à partir de leurs identifiants
-                var ingredientRecipes = new List<Recipe>();
+                var ingRecipes = new List<Recipe>();
                 foreach (var id in cachedResults)
                 {
                     var recipe = await GetRecipeByIdAsync(id);
                     if (recipe != null)
-                        ingredientRecipes.Add(recipe);
+                        ingRecipes.Add(recipe);
                 }
-                return ingredientRecipes;
+                return ingRecipes;
             }
 
             // Si pas dans le cache, faire la requête à l'API
@@ -476,7 +476,7 @@ namespace RecipeHub.Services.API
 
             // Extraire les identifiants et les mettre en cache
             var recipeIds = new List<int>();
-            var ingredientRecipes = new List<Recipe>();
+            var ingredientResults = new List<Recipe>();
             
             foreach (var mealSummary in result.Meals)
             {
@@ -485,14 +485,14 @@ namespace RecipeHub.Services.API
                     recipeIds.Add(id);
                     var recipeDetails = await GetRecipeByIdAsync(id);
                     if (recipeDetails != null)
-                        ingredientRecipes.Add(recipeDetails);
+                        ingredientResults.Add(recipeDetails);
                 }
             }
             
             // Sauvegarder les identifiants des recettes dans le cache
             await _cacheService.SetAsync(cacheKey, recipeIds, FilterCacheDuration);
             
-            return ingredientRecipes;
+            return ingredientResults;
         }
 
         /// <summary>
