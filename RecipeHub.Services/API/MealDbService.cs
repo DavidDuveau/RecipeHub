@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using RecipeHub.Core.Interfaces;
 using RecipeHub.Core.Models;
 using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,29 +10,60 @@ using System.Threading.Tasks;
 namespace RecipeHub.Services.API
 {
     /// <summary>
-    /// Implémentation du service pour accéder à l'API TheMealDB.
+    /// Implémentation du service pour accéder à l'API TheMealDB avec support de cache.
     /// </summary>
     public class MealDbService : IMealDbService
     {
         private readonly RestClient _client;
+        private readonly ICacheService _cacheService;
+        private readonly IFavoritesService _favoritesService;
+        
         private const string API_KEY = "1"; // Clé API gratuite (à remplacer par une vraie clé si nécessaire)
         private const string BASE_URL = "https://www.themealdb.com/api/json/v1/";
+        
+        // Durées de cache par type de données
+        private static readonly TimeSpan RecipeCacheDuration = TimeSpan.FromDays(7);
+        private static readonly TimeSpan CategoryCacheDuration = TimeSpan.FromDays(30);
+        private static readonly TimeSpan AreaCacheDuration = TimeSpan.FromDays(30);
+        private static readonly TimeSpan IngredientCacheDuration = TimeSpan.FromDays(30);
+        private static readonly TimeSpan SearchCacheDuration = TimeSpan.FromHours(24);
+        private static readonly TimeSpan FilterCacheDuration = TimeSpan.FromDays(1);
 
         /// <summary>
         /// Constructeur du service MealDB.
         /// </summary>
-        public MealDbService()
+        /// <param name="cacheService">Service de cache à utiliser</param>
+        /// <param name="favoritesService">Service de gestion des favoris (optionnel)</param>
+        public MealDbService(ICacheService cacheService, IFavoritesService favoritesService = null)
         {
             _client = new RestClient($"{BASE_URL}{API_KEY}/");
+            _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+            _favoritesService = favoritesService;
         }
 
         /// <summary>
-        /// Récupère une recette par son identifiant.
+        /// Récupère une recette par son identifiant, en utilisant le cache si disponible.
         /// </summary>
         /// <param name="id">Identifiant de la recette</param>
         /// <returns>La recette correspondante ou null si non trouvée</returns>
         public async Task<Recipe?> GetRecipeByIdAsync(int id)
         {
+            // Clé de cache pour cette recette
+            string cacheKey = $"recipe_{id}";
+            
+            // Vérifier si la recette est dans le cache
+            var cachedRecipe = await _cacheService.GetAsync<Recipe>(cacheKey);
+            if (cachedRecipe != null)
+            {
+                // Vérifier si la recette est dans les favoris (si le service de favoris est disponible)
+                if (_favoritesService != null)
+                {
+                    cachedRecipe.IsFavorite = await _favoritesService.IsFavoriteAsync(id);
+                }
+                return cachedRecipe;
+            }
+
+            // Si pas dans le cache, faire la requête à l'API
             var request = new RestRequest($"lookup.php?i={id}");
             var response = await _client.ExecuteAsync(request);
 
@@ -40,19 +72,53 @@ namespace RecipeHub.Services.API
 
             // Traitement de la réponse JSON
             var result = JsonConvert.DeserializeObject<MealDbRecipeResponse>(response.Content);
+            if (result?.Meals?.FirstOrDefault() == null)
+                return null;
+                
+            var recipe = ConvertToRecipe(result.Meals.First());
             
-            return result?.Meals?.FirstOrDefault() != null 
-                ? ConvertToRecipe(result.Meals.First()) 
-                : null;
+            // Vérifier si la recette est dans les favoris (si le service de favoris est disponible)
+            if (_favoritesService != null)
+            {
+                recipe.IsFavorite = await _favoritesService.IsFavoriteAsync(id);
+            }
+            
+            // Sauvegarder la recette dans le cache
+            await _cacheService.SetAsync(cacheKey, recipe, RecipeCacheDuration);
+            
+            return recipe;
         }
 
         /// <summary>
-        /// Recherche des recettes par leur nom.
+        /// Recherche des recettes par leur nom, en utilisant le cache si disponible.
         /// </summary>
         /// <param name="name">Nom ou partie du nom à rechercher</param>
         /// <returns>Liste des recettes correspondantes</returns>
         public async Task<List<Recipe>> SearchRecipesByNameAsync(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                return new List<Recipe>();
+                
+            // Clé de cache normalisée (en minuscules sans espaces excessifs)
+            string normalizedName = name.Trim().ToLowerInvariant();
+            string cacheKey = $"search_{normalizedName}";
+            
+            // Vérifier si les résultats sont dans le cache
+            var cachedResults = await _cacheService.GetAsync<List<int>>(cacheKey);
+            if (cachedResults != null)
+            {
+                // Récupérer les recettes à partir de leurs identifiants
+                var recipes = new List<Recipe>();
+                foreach (var id in cachedResults)
+                {
+                    var recipe = await GetRecipeByIdAsync(id);
+                    if (recipe != null)
+                        recipes.Add(recipe);
+                }
+                return recipes;
+            }
+
+            // Si pas dans le cache, faire la requête à l'API
             var request = new RestRequest($"search.php?s={name}");
             var response = await _client.ExecuteAsync(request);
 
@@ -60,10 +126,32 @@ namespace RecipeHub.Services.API
                 return new List<Recipe>();
 
             var result = JsonConvert.DeserializeObject<MealDbRecipeResponse>(response.Content);
+            if (result?.Meals == null)
+                return new List<Recipe>();
+                
+            // Convertir les résultats en recettes
+            var apiRecipes = result.Meals.Select(ConvertToRecipe).ToList();
             
-            return result?.Meals != null 
-                ? result.Meals.Select(ConvertToRecipe).ToList() 
-                : new List<Recipe>();
+            // Mettre à jour le statut de favori pour chaque recette
+            if (_favoritesService != null)
+            {
+                foreach (var recipe in apiRecipes)
+                {
+                    recipe.IsFavorite = await _favoritesService.IsFavoriteAsync(recipe.Id);
+                }
+            }
+            
+            // Sauvegarder les identifiants des recettes dans le cache
+            var recipeIds = apiRecipes.Select(r => r.Id).ToList();
+            await _cacheService.SetAsync(cacheKey, recipeIds, SearchCacheDuration);
+            
+            // Mettre en cache chaque recette individuelle
+            foreach (var recipe in apiRecipes)
+            {
+                await _cacheService.SetAsync($"recipe_{recipe.Id}", recipe, RecipeCacheDuration);
+            }
+            
+            return apiRecipes;
         }
 
         /// <summary>
@@ -73,6 +161,8 @@ namespace RecipeHub.Services.API
         /// <returns>Liste des recettes aléatoires</returns>
         public async Task<List<Recipe>> GetRandomRecipesAsync(int count)
         {
+            // Les recettes aléatoires ne sont pas mises en cache car elles doivent 
+            // changer à chaque appel
             var recipes = new List<Recipe>();
 
             // L'API gratuite ne permet de récupérer qu'une recette aléatoire à la fois
@@ -89,7 +179,18 @@ namespace RecipeHub.Services.API
                 
                 if (result?.Meals?.FirstOrDefault() != null)
                 {
-                    recipes.Add(ConvertToRecipe(result.Meals.First()));
+                    var recipe = ConvertToRecipe(result.Meals.First());
+                    
+                    // Vérifier si la recette est dans les favoris
+                    if (_favoritesService != null)
+                    {
+                        recipe.IsFavorite = await _favoritesService.IsFavoriteAsync(recipe.Id);
+                    }
+                    
+                    recipes.Add(recipe);
+                    
+                    // On profite de l'occasion pour mettre cette recette en cache
+                    await _cacheService.SetAsync($"recipe_{recipe.Id}", recipe, RecipeCacheDuration);
                 }
             }
 
@@ -97,11 +198,20 @@ namespace RecipeHub.Services.API
         }
 
         /// <summary>
-        /// Récupère toutes les catégories disponibles.
+        /// Récupère toutes les catégories disponibles, en utilisant le cache si disponible.
         /// </summary>
         /// <returns>Liste des catégories</returns>
         public async Task<List<Category>> GetCategoriesAsync()
         {
+            // Clé de cache pour les catégories
+            string cacheKey = "categories";
+            
+            // Vérifier si les catégories sont dans le cache
+            var cachedCategories = await _cacheService.GetAsync<List<Category>>(cacheKey);
+            if (cachedCategories != null)
+                return cachedCategories;
+
+            // Si pas dans le cache, faire la requête à l'API
             var request = new RestRequest("categories.php");
             var response = await _client.ExecuteAsync(request);
 
@@ -109,25 +219,54 @@ namespace RecipeHub.Services.API
                 return new List<Category>();
 
             var result = JsonConvert.DeserializeObject<MealDbCategoryResponse>(response.Content);
+            if (result?.Categories == null)
+                return new List<Category>();
+                
+            // Convertir les résultats en catégories
+            var categories = result.Categories.Select(c => new Category
+            {
+                Id = int.Parse(c.IdCategory),
+                Name = c.StrCategory,
+                Description = c.StrCategoryDescription,
+                Thumbnail = c.StrCategoryThumb
+            }).ToList();
             
-            return result?.Categories != null 
-                ? result.Categories.Select(c => new Category
-                {
-                    Id = int.Parse(c.IdCategory),
-                    Name = c.StrCategory,
-                    Description = c.StrCategoryDescription,
-                    Thumbnail = c.StrCategoryThumb
-                }).ToList() 
-                : new List<Category>();
+            // Sauvegarder les catégories dans le cache
+            await _cacheService.SetAsync(cacheKey, categories, CategoryCacheDuration);
+            
+            return categories;
         }
 
         /// <summary>
-        /// Récupère les recettes d'une catégorie spécifique.
+        /// Récupère les recettes d'une catégorie spécifique, en utilisant le cache si disponible.
         /// </summary>
         /// <param name="category">Nom de la catégorie</param>
         /// <returns>Liste des recettes de la catégorie</returns>
         public async Task<List<Recipe>> GetRecipesByCategoryAsync(string category)
         {
+            if (string.IsNullOrWhiteSpace(category))
+                return new List<Recipe>();
+                
+            // Clé de cache pour cette catégorie
+            string normalizedCategory = category.Trim().ToLowerInvariant();
+            string cacheKey = $"category_{normalizedCategory}";
+            
+            // Vérifier si les résultats sont dans le cache
+            var cachedResults = await _cacheService.GetAsync<List<int>>(cacheKey);
+            if (cachedResults != null)
+            {
+                // Récupérer les recettes à partir de leurs identifiants
+                var recipes = new List<Recipe>();
+                foreach (var id in cachedResults)
+                {
+                    var recipe = await GetRecipeByIdAsync(id);
+                    if (recipe != null)
+                        recipes.Add(recipe);
+                }
+                return recipes;
+            }
+
+            // Si pas dans le cache, faire la requête à l'API
             var request = new RestRequest($"filter.php?c={category}");
             var response = await _client.ExecuteAsync(request);
 
@@ -141,26 +280,42 @@ namespace RecipeHub.Services.API
             if (result?.Meals == null)
                 return new List<Recipe>();
 
+            // Extraire les identifiants et les mettre en cache
+            var recipeIds = new List<int>();
             var recipes = new List<Recipe>();
+            
             foreach (var mealSummary in result.Meals)
             {
                 if (int.TryParse(mealSummary.IdMeal, out int id))
                 {
+                    recipeIds.Add(id);
                     var recipeDetails = await GetRecipeByIdAsync(id);
                     if (recipeDetails != null)
                         recipes.Add(recipeDetails);
                 }
             }
-
+            
+            // Sauvegarder les identifiants des recettes dans le cache
+            await _cacheService.SetAsync(cacheKey, recipeIds, FilterCacheDuration);
+            
             return recipes;
         }
 
         /// <summary>
-        /// Récupère les régions (aires) culinaires disponibles.
+        /// Récupère les régions (aires) culinaires disponibles, en utilisant le cache si disponible.
         /// </summary>
         /// <returns>Liste des régions</returns>
         public async Task<List<string>> GetAreasAsync()
         {
+            // Clé de cache pour les régions
+            string cacheKey = "areas";
+            
+            // Vérifier si les régions sont dans le cache
+            var cachedAreas = await _cacheService.GetAsync<List<string>>(cacheKey);
+            if (cachedAreas != null)
+                return cachedAreas;
+
+            // Si pas dans le cache, faire la requête à l'API
             var request = new RestRequest("list.php?a=list");
             var response = await _client.ExecuteAsync(request);
 
@@ -168,19 +323,48 @@ namespace RecipeHub.Services.API
                 return new List<string>();
 
             var result = JsonConvert.DeserializeObject<MealDbAreaResponse>(response.Content);
+            if (result?.Meals == null)
+                return new List<string>();
+                
+            // Extraire les noms des régions
+            var areas = result.Meals.Select(a => a.StrArea).ToList();
             
-            return result?.Meals != null 
-                ? result.Meals.Select(a => a.StrArea).ToList() 
-                : new List<string>();
+            // Sauvegarder les régions dans le cache
+            await _cacheService.SetAsync(cacheKey, areas, AreaCacheDuration);
+            
+            return areas;
         }
 
         /// <summary>
-        /// Récupère les recettes d'une région spécifique.
+        /// Récupère les recettes d'une région spécifique, en utilisant le cache si disponible.
         /// </summary>
         /// <param name="area">Nom de la région</param>
         /// <returns>Liste des recettes de la région</returns>
         public async Task<List<Recipe>> GetRecipesByAreaAsync(string area)
         {
+            if (string.IsNullOrWhiteSpace(area))
+                return new List<Recipe>();
+                
+            // Clé de cache pour cette région
+            string normalizedArea = area.Trim().ToLowerInvariant();
+            string cacheKey = $"area_{normalizedArea}";
+            
+            // Vérifier si les résultats sont dans le cache
+            var cachedResults = await _cacheService.GetAsync<List<int>>(cacheKey);
+            if (cachedResults != null)
+            {
+                // Récupérer les recettes à partir de leurs identifiants
+                var recipes = new List<Recipe>();
+                foreach (var id in cachedResults)
+                {
+                    var recipe = await GetRecipeByIdAsync(id);
+                    if (recipe != null)
+                        recipes.Add(recipe);
+                }
+                return recipes;
+            }
+
+            // Si pas dans le cache, faire la requête à l'API
             var request = new RestRequest($"filter.php?a={area}");
             var response = await _client.ExecuteAsync(request);
 
@@ -193,26 +377,42 @@ namespace RecipeHub.Services.API
             if (result?.Meals == null)
                 return new List<Recipe>();
 
+            // Extraire les identifiants et les mettre en cache
+            var recipeIds = new List<int>();
             var recipes = new List<Recipe>();
+            
             foreach (var mealSummary in result.Meals)
             {
                 if (int.TryParse(mealSummary.IdMeal, out int id))
                 {
+                    recipeIds.Add(id);
                     var recipeDetails = await GetRecipeByIdAsync(id);
                     if (recipeDetails != null)
                         recipes.Add(recipeDetails);
                 }
             }
-
+            
+            // Sauvegarder les identifiants des recettes dans le cache
+            await _cacheService.SetAsync(cacheKey, recipeIds, FilterCacheDuration);
+            
             return recipes;
         }
 
         /// <summary>
-        /// Récupère la liste des ingrédients disponibles.
+        /// Récupère la liste des ingrédients disponibles, en utilisant le cache si disponible.
         /// </summary>
         /// <returns>Liste des ingrédients</returns>
         public async Task<List<string>> GetIngredientsAsync()
         {
+            // Clé de cache pour les ingrédients
+            string cacheKey = "ingredients";
+            
+            // Vérifier si les ingrédients sont dans le cache
+            var cachedIngredients = await _cacheService.GetAsync<List<string>>(cacheKey);
+            if (cachedIngredients != null)
+                return cachedIngredients;
+
+            // Si pas dans le cache, faire la requête à l'API
             var request = new RestRequest("list.php?i=list");
             var response = await _client.ExecuteAsync(request);
 
@@ -220,19 +420,48 @@ namespace RecipeHub.Services.API
                 return new List<string>();
 
             var result = JsonConvert.DeserializeObject<MealDbIngredientResponse>(response.Content);
+            if (result?.Meals == null)
+                return new List<string>();
+                
+            // Extraire les noms des ingrédients
+            var ingredients = result.Meals.Select(i => i.StrIngredient).ToList();
             
-            return result?.Meals != null 
-                ? result.Meals.Select(i => i.StrIngredient).ToList() 
-                : new List<string>();
+            // Sauvegarder les ingrédients dans le cache
+            await _cacheService.SetAsync(cacheKey, ingredients, IngredientCacheDuration);
+            
+            return ingredients;
         }
 
         /// <summary>
-        /// Récupère les recettes contenant un ingrédient spécifique.
+        /// Récupère les recettes contenant un ingrédient spécifique, en utilisant le cache si disponible.
         /// </summary>
         /// <param name="ingredient">Nom de l'ingrédient</param>
         /// <returns>Liste des recettes contenant l'ingrédient</returns>
         public async Task<List<Recipe>> GetRecipesByIngredientAsync(string ingredient)
         {
+            if (string.IsNullOrWhiteSpace(ingredient))
+                return new List<Recipe>();
+                
+            // Clé de cache pour cet ingrédient
+            string normalizedIngredient = ingredient.Trim().ToLowerInvariant();
+            string cacheKey = $"ingredient_{normalizedIngredient}";
+            
+            // Vérifier si les résultats sont dans le cache
+            var cachedResults = await _cacheService.GetAsync<List<int>>(cacheKey);
+            if (cachedResults != null)
+            {
+                // Récupérer les recettes à partir de leurs identifiants
+                var recipes = new List<Recipe>();
+                foreach (var id in cachedResults)
+                {
+                    var recipe = await GetRecipeByIdAsync(id);
+                    if (recipe != null)
+                        recipes.Add(recipe);
+                }
+                return recipes;
+            }
+
+            // Si pas dans le cache, faire la requête à l'API
             var request = new RestRequest($"filter.php?i={ingredient}");
             var response = await _client.ExecuteAsync(request);
 
@@ -245,17 +474,24 @@ namespace RecipeHub.Services.API
             if (result?.Meals == null)
                 return new List<Recipe>();
 
+            // Extraire les identifiants et les mettre en cache
+            var recipeIds = new List<int>();
             var recipes = new List<Recipe>();
+            
             foreach (var mealSummary in result.Meals)
             {
                 if (int.TryParse(mealSummary.IdMeal, out int id))
                 {
+                    recipeIds.Add(id);
                     var recipeDetails = await GetRecipeByIdAsync(id);
                     if (recipeDetails != null)
                         recipes.Add(recipeDetails);
                 }
             }
-
+            
+            // Sauvegarder les identifiants des recettes dans le cache
+            await _cacheService.SetAsync(cacheKey, recipeIds, FilterCacheDuration);
+            
             return recipes;
         }
 

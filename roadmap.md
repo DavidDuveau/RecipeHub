@@ -11,14 +11,14 @@
 
 ### Semaine 2: Services Core et API
 - [x] Implémentation du service MealDbService (connexion à l'API)
-- [ ] Mise en place du système de cache
-- [ ] Développement des méthodes principales d'accès aux données
+- [x] Mise en place du système de cache
+- [x] Développement des méthodes principales d'accès aux données
 - [ ] Tests unitaires des services
 
 ### Semaine 3: Base de l'Interface Utilisateur
-- [x] Design de la navigation principale
+- [ ] Design de la navigation principale
 - [ ] Mise en place des styles et thèmes de base
-- [x] Création de la page d'accueil (shell)
+- [ ] Création de la page d'accueil (shell)
 - [ ] Configuration du système de navigation entre les vues
 
 ## Phase 2: Fonctionnalités Essentielles (Semaines 4-7)
@@ -36,8 +36,8 @@
 - [ ] Optimisation du chargement des images
 
 ### Semaine 6: Favoris et Stockage Local
-- [ ] Implémentation du service de favoris
-- [ ] Développement de la base de données locale SQLite
+- [x] Implémentation du service de favoris
+- [x] Développement de la base de données locale SQLite
 - [ ] Création de la vue de gestion des favoris
 - [ ] Synchronisation entre l'API et la base locale
 
@@ -47,10 +47,10 @@
 - [ ] Développement de la page de recherche avancée
 - [ ] Tests de performance des recherches
 
-## Phase 3: Fonctionnalités Avancées (Semaines 8-11)
+## Phase 3: Fonctionnalités Avancées (Semaines 8-10)
 
 ### Semaine 8: Mode Hors Connexion
-- [ ] Finalisation du système de cache
+- [x] Finalisation du système de cache
 - [ ] Implémentation de la détection de la connectivité
 - [ ] Adaptation de l'interface en mode hors connexion
 - [ ] Tests du comportement hors ligne
@@ -67,21 +67,15 @@
 - [ ] Intégration avec les favoris
 - [ ] Tests d'intégration des fonctionnalités de planification
 
-### Semaine 11: Partage et Exportation
-- [ ] Développement des fonctionnalités de partage via email
-- [ ] Implémentation du partage sur réseaux sociaux
-- [ ] Création du système d'exportation en format PDF et texte
-- [ ] Tests des fonctionnalités de partage et d'exportation
+## Phase 4: Polissage et Préparation à la Livraison (Semaines 11-12)
 
-## Phase 4: Polissage et Préparation à la Livraison (Semaines 12-13)
-
-### Semaine 12: Optimisation et Corrections
+### Semaine 11: Optimisation et Corrections
 - [ ] Revue de code complète
 - [ ] Optimisation des performances
 - [ ] Correction des bugs identifiés
 - [ ] Tests de charge et de stress
 
-### Semaine 13: Finalisation
+### Semaine 12: Finalisation
 - [ ] Création de l'assistant de première utilisation
 - [ ] Documentation utilisateur in-app
 - [ ] Création du programme d'installation
@@ -107,9 +101,9 @@
    - Connexion à l'API et stockage local fonctionnels
 
 2. **Beta (Fin de la Phase 3)**
-   - Toutes les fonctionnalités principales et secondaires implémentées
+   - Toutes les fonctionnalités implémentées
    - Mode hors ligne fonctionnel
-   - Personnalisation, planification de repas et partage disponibles
+   - Personnalisation et options avancées disponibles
 
 3. **Release Candidate (Milieu de la Phase 4)**
    - Application stable avec performances optimisées

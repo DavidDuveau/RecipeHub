@@ -33,8 +33,8 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
 - **Prism** : Framework MVVM
 - **RestSharp** : Client HTTP pour la communication avec l'API
 - **Newtonsoft.Json** : Sérialisation/désérialisation JSON
-- **MaterialDesignInXAML** : Composants UI modernes
 - **SQLite** : Stockage local des données
+- **MaterialDesignInXAML** : Composants UI modernes
 
 ## Prérequis
 
@@ -56,8 +56,10 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
 - [x] Définition des interfaces principales
 - [x] Création des modèles de données de base
 - [x] Implémentation des services d'accès à l'API
+- [x] Mise en place du système de cache
+- [x] Développement des méthodes principales d'accès aux données
 - [ ] Développement de l'interface utilisateur
-- [ ] Mise en place du stockage local (favoris)
+- [x] Mise en place du stockage local (favoris)
 
 ## Roadmap
 
