@@ -65,7 +65,7 @@
         
         <!-- Onglets pour les différents modes d'exploration -->
         <materialDesign:Card Grid.Row="2" Margin="0,0,0,16">
-            <TabControl SelectedIndex="{Binding SelectedTab, Mode=TwoWay, ConverterParameter=categories:0;areas:1;ingredients:2}">
+            <TabControl SelectedIndex="{Binding SelectedTab, Mode=TwoWay, Converter={StaticResource StringToTabIndexConverter}, ConverterParameter=categories:0;areas:1;ingredients:2}">
                 <TabItem Header="Catégories">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -187,19 +187,26 @@
                                   Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                                   Margin="16,16,16,8"/>
                         
-                        <TextBox Grid.Row="1"
-                                Grid.Column="0"
-                                Margin="16,0,16,16"
-                                materialDesign:HintAssist.Hint="Filtrer les ingrédients"
-                                Text="{Binding IngredientFilter, UpdateSourceTrigger=PropertyChanged}">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" 
-                                           Command="{Binding FilterIngredientsCommand}"/>
-                            </TextBox.InputBindings>
-                            <TextBox.LeadingIcon>
+                        <Grid Grid.Row="1" Margin="16,0,16,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                    materialDesign:HintAssist.Hint="Filtrer les ingrédients"
+                                    Text="{Binding IngredientFilter, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" 
+                                              Command="{Binding FilterIngredientsCommand}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Button Grid.Column="1" 
+                                    Style="{StaticResource MaterialDesignIconButton}" 
+                                    Command="{Binding FilterIngredientsCommand}"
+                                    Margin="8,0,0,0">
                                 <materialDesign:PackIcon Kind="Magnify"/>
-                            </TextBox.LeadingIcon>
-                        </TextBox>
+                            </Button>
+                        </Grid>
                         
                         <ScrollViewer Grid.Row="2" 
                                      VerticalScrollBarVisibility="Auto" 
