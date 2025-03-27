@@ -63,9 +63,20 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
   - [x] Interface principale (ShellView)
   - [x] Page d'accueil (HomeView)
   - [x] Page d'exploration des recettes (ExploreView)
+    - [x] Correction des problèmes de convertisseurs
+    - [x] Adaptation de l'interface de recherche d'ingrédients
   - [ ] Page de détails des recettes (RecipeDetailsView)
   - [ ] Page des favoris (FavoritesView)
   - [ ] Page de recherche (SearchView)
+- [x] Correction des problèmes de compilation
+  - [x] Résolution des erreurs de références aux convertisseurs
+  - [x] Adaptation des composants UI pour compatibilité MaterialDesign
+
+## Dernières modifications
+
+- Correction des erreurs de compilation liées aux convertisseurs
+- Refactoring de l'interface d'exploration des recettes
+- Remplacement de TextBox.LeadingIcon par une approche compatible avec la version actuelle de MaterialDesignInXAML
 
 ## Roadmap
 
