@@ -23,11 +23,16 @@
   <ItemGroup>
     <Folder Include="Assets\" />
     <Folder Include="Controls\" />
-    <Folder Include="Converters\" />
     <Folder Include="Helpers\" />
     <Folder Include="Resources\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\FavoriteIconConverter.cs" />
+    <Compile Include="Converters\StringToVisibilityConverter.cs" />
   </ItemGroup>
 
 </Project>
