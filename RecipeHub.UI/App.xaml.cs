@@ -1,6 +1,10 @@
 using Prism.DryIoc;
 using Prism.Ioc;
 using System.Windows;
+using RecipeHub.Core.Interfaces;
+using RecipeHub.Services.API;
+using RecipeHub.Services.Cache;
+using RecipeHub.Services.Data;
 using RecipeHub.UI.Views;
 
 namespace RecipeHub.UI
@@ -18,10 +22,12 @@ namespace RecipeHub.UI
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             // Enregistrement des services
-            // containerRegistry.Register<IMealDbService, MealDbService>();
-            // containerRegistry.Register<IFavoritesService, FavoritesService>();
+            containerRegistry.RegisterSingleton<ICacheService, InMemoryCacheService>();
+            containerRegistry.RegisterSingleton<IFavoritesService, FavoritesService>();
+            containerRegistry.RegisterSingleton<IMealDbService, MealDbService>();
             
             // Enregistrement des vues pour la navigation
+            // À activer progressivement lors du développement
             // containerRegistry.RegisterForNavigation<HomeView>();
             // containerRegistry.RegisterForNavigation<ExploreView>();
             // containerRegistry.RegisterForNavigation<RecipeDetailsView>();
