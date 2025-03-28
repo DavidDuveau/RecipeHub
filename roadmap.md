@@ -5,47 +5,47 @@
 ### Semaine 1: Configuration et Architecture
 - [x] Création du repository Git et structuration du projet
 - [x] Configuration de l'environnement de développement
-- [ ] Mise en place de l'architecture MVVM
-- [ ] Définition des interfaces principales
-- [ ] Création des modèles de données de base (Recipe, Category, Ingredient)
+- [x] Mise en place de l'architecture MVVM
+- [x] Définition des interfaces principales
+- [x] Création des modèles de données de base (Recipe, Category, Ingredient)
 
 ### Semaine 2: Services Core et API
 - [ ] Définition et implémentation de l'interface `IRecipeProvider`
-- [ ] Développement du `MealDbProvider` (connexion à l'API TheMealDB)
+- [x] Développement du `MealDbProvider` (connexion à l'API TheMealDB)
 - [ ] Développement du `SpoonacularProvider` (connexion à l'API Spoonacular)
 - [ ] Implémentation du service d'agrégation `AggregateRecipeService`
 - [ ] Création du système de cache multi-source
 - [ ] Implémentation du système de gestion des limites d'API avec persistance
 - [ ] Mise en place du système de métriques d'utilisation des API
-- [ ] Tests unitaires des services d'accès aux données
+- [x] Tests unitaires des services d'accès aux données
 
 ### Semaine 3: Base de l'Interface Utilisateur
-- [ ] Design de la navigation principale
-- [ ] Mise en place des styles et thèmes de base
-- [ ] Création de la page d'accueil (shell)
-- [ ] Configuration du système de navigation entre les vues
+- [x] Design de la navigation principale
+- [x] Mise en place des styles et thèmes de base
+- [x] Création de la page d'accueil (shell)
+- [x] Configuration du système de navigation entre les vues
 - [ ] Conception d'une interface unifiée indépendante de la source des données
 - [ ] Indicateurs visuels optionnels pour distinguer les sources
 
 ## Phase 2: Fonctionnalités Essentielles (Semaines 4-7)
 
 ### Semaine 4: Exploration et Recherche
-- [ ] Développement de la page d'exploration des recettes
-- [ ] Implémentation des filtres par catégorie
-- [ ] Création de la fonctionnalité de recherche simple
-- [ ] Tests d'intégration des fonctionnalités d'exploration
+- [x] Développement de la page d'exploration des recettes
+- [x] Implémentation des filtres par catégorie
+- [x] Création de la fonctionnalité de recherche simple
+- [x] Tests d'intégration des fonctionnalités d'exploration
 - [ ] Implémentation de la recherche multi-source
 
 ### Semaine 5: Détails des Recettes
-- [ ] Conception et implémentation de la vue détaillée d'une recette
-- [ ] Développement de l'affichage des ingrédients et instructions
-- [ ] Implémentation de la navigation entre les recettes liées
-- [ ] Optimisation du chargement des images
+- [x] Conception et implémentation de la vue détaillée d'une recette
+- [x] Développement de l'affichage des ingrédients et instructions
+- [x] Implémentation de la navigation entre les recettes liées
+- [x] Optimisation du chargement des images
 - [ ] Normalisation de l'affichage des données provenant de sources différentes
 
 ### Semaine 6: Favoris et Stockage Local
-- [ ] Implémentation du service de favoris
-- [ ] Développement de la base de données locale SQLite
+- [x] Implémentation du service de favoris
+- [x] Développement de la base de données locale SQLite
 - [ ] Création de la vue de gestion des favoris
 - [ ] Synchronisation entre les APIs et la base locale
 - [ ] Stockage des métadonnées de source pour chaque recette
