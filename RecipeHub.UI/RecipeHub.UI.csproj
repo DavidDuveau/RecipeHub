@@ -29,6 +29,9 @@
     <Folder Include="Views\" />
   </ItemGroup>
 
-  <!-- Les fichiers de convertisseurs sont automatiquement inclus par SDK, pas besoin de les spécifier explicitement -->
+  <!-- Inclure explicitement les convertisseurs pour être sûr -->
+  <ItemGroup>
+    <Compile Include="Converters\*.cs" />
+  </ItemGroup>
 
 </Project>
