@@ -4,7 +4,7 @@
 
 ### Semaine 1: Configuration et Architecture
 - [x] Création du repository Git et structuration du projet
-- [ ] Configuration de l'environnement de développement
+- [x] Configuration de l'environnement de développement
 - [ ] Mise en place de l'architecture MVVM
 - [ ] Définition des interfaces principales
 - [ ] Création des modèles de données de base (Recipe, Category, Ingredient)
