@@ -53,9 +53,18 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 - Ajustement de la taille des polices
 - Personnalisation de la disposition des éléments
 
-#### 2.2.2 Planification de Repas
-- Création de menus hebdomadaires
-- Génération de listes de courses basées sur les recettes sélectionnées
+#### 2.2.2 Planification de Repas et Liste de Courses
+- Création de menus hebdomadaires ou mensuels
+- Sélection des recettes par jour et type de repas (petit-déjeuner, déjeuner, dîner)
+- Génération automatique de listes de courses basées sur les recettes sélectionnées
+  - Agrégation intelligente des ingrédients (regroupement des quantités)
+  - Normalisation des unités de mesure quand possible
+  - Organisation par catégories de produits (produits frais, épicerie, etc.)
+- Fonctionnalités de gestion de liste
+  - Marquage des éléments comme achetés
+  - Ajout manuel d'articles supplémentaires
+  - Modification des quantités
+  - Suppression d'éléments non désirés
 
 #### 2.2.3 Partage et Exportation
 - Partage de recettes via email ou réseaux sociaux

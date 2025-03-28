@@ -63,10 +63,17 @@
 - [ ] Mécanisme de sauvegarde des préférences utilisateur
 - [ ] Tests d'accessibilité
 
-### Semaine 10: Planification de Repas
+### Semaine 10: Planification de Repas et Liste de Courses
 - [ ] Création de la fonctionnalité de planification hebdomadaire
+  - [ ] Interface de sélection des recettes par jour/repas
+  - [ ] Sauvegarde et modification des plans de repas
+  - [ ] Visualisation des plans de repas par semaine/mois
 - [ ] Développement du générateur de liste de courses
-- [ ] Intégration avec les favoris
+  - [ ] Agrégation intelligente des ingrédients similaires
+  - [ ] Conversion et normalisation des unités de mesure
+  - [ ] Catégorisation des ingrédients par rayon de magasin
+  - [ ] Fonctionnalité de suivi d'achat (marquer comme acheté)
+- [ ] Intégration avec les favoris et recettes récentes
 - [ ] Tests d'intégration des fonctionnalités de planification
 
 ## Phase 4: Polissage et Préparation à la Livraison (Semaines 11-12)
