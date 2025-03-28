@@ -32,10 +32,10 @@
 - [ ] Tests d'intégration des fonctionnalités d'exploration
 
 ### Semaine 5: Détails des Recettes
-- [ ] Conception et implémentation de la vue détaillée d'une recette
-- [ ] Développement de l'affichage des ingrédients et instructions
-- [ ] Implémentation de la navigation entre les recettes liées
-- [ ] Optimisation du chargement des images
+- [x] Conception et implémentation de la vue détaillée d'une recette
+- [x] Développement de l'affichage des ingrédients et instructions
+- [x] Implémentation de la navigation entre les recettes liées
+- [x] Optimisation du chargement des images
 
 ### Semaine 6: Favoris et Stockage Local
 - [x] Implémentation du service de favoris

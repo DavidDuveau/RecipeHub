@@ -18,6 +18,7 @@
             <converters:BooleanToVisibilityInverseConverter x:Key="BooleanToVisibilityInverseConverter" />
             <converters:FavoriteIconConverter x:Key="FavoriteIconConverter" />
             <converters:StringToTabIndexConverter x:Key="StringToTabIndexConverter" />
+            <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </prism:PrismApplication>

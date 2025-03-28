@@ -65,7 +65,10 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
   - [x] Page d'exploration des recettes (ExploreView)
     - [x] Correction des problèmes de convertisseurs
     - [x] Adaptation de l'interface de recherche d'ingrédients
-  - [ ] Page de détails des recettes (RecipeDetailsView)
+  - [x] Page de détails des recettes (RecipeDetailsView)
+    - [x] Affichage des informations détaillées de la recette
+    - [x] Gestion des ingrédients et instructions
+    - [x] Intégration des recettes similaires
   - [ ] Page des favoris (FavoritesView)
   - [ ] Page de recherche (SearchView)
 - [x] Correction des problèmes de compilation
@@ -74,6 +77,9 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
 
 ## Dernières modifications
 
+- Implémentation de la page de détails des recettes (RecipeDetailsView)
+- Ajout du convertisseur IntToVisibilityConverter pour améliorer l'interface utilisateur
+- Navigation entre les recettes et affichage des recettes similaires
 - Correction des erreurs de compilation liées aux convertisseurs
 - Refactoring de l'interface d'exploration des recettes
 - Remplacement de TextBox.LeadingIcon par une approche compatible avec la version actuelle de MaterialDesignInXAML
