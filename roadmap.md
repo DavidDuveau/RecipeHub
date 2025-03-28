@@ -4,81 +4,89 @@
 
 ### Semaine 1: Configuration et Architecture
 - [x] Création du repository Git et structuration du projet
-- [x] Configuration de l'environnement de développement
-- [x] Mise en place de l'architecture MVVM
-- [x] Définition des interfaces principales
-- [x] Création des modèles de données de base (Recipe, Category, Ingredient)
+- [ ] Configuration de l'environnement de développement
+- [ ] Mise en place de l'architecture MVVM
+- [ ] Définition des interfaces principales
+- [ ] Création des modèles de données de base (Recipe, Category, Ingredient)
 
 ### Semaine 2: Services Core et API
-- [x] Implémentation du service MealDbService (connexion à l'API)
-- [x] Mise en place du système de cache
-- [x] Développement des méthodes principales d'accès aux données
-- [ ] Tests unitaires des services
+- [ ] Définition et implémentation de l'interface `IRecipeProvider`
+- [ ] Développement du `MealDbProvider` (connexion à l'API TheMealDB)
+- [ ] Développement du `SpoonacularProvider` (connexion à l'API Spoonacular)
+- [ ] Implémentation du service d'agrégation `AggregateRecipeService`
+- [ ] Création du système de cache multi-source
+- [ ] Implémentation du système de gestion des limites d'API avec persistance
+- [ ] Mise en place du système de métriques d'utilisation des API
+- [ ] Tests unitaires des services d'accès aux données
 
 ### Semaine 3: Base de l'Interface Utilisateur
-- [x] Design de la navigation principale
-- [x] Mise en place des styles et thèmes de base
-- [x] Création de la page d'accueil (shell)
-- [x] Configuration du système de navigation entre les vues
+- [ ] Design de la navigation principale
+- [ ] Mise en place des styles et thèmes de base
+- [ ] Création de la page d'accueil (shell)
+- [ ] Configuration du système de navigation entre les vues
+- [ ] Conception d'une interface unifiée indépendante de la source des données
+- [ ] Indicateurs visuels optionnels pour distinguer les sources
 
 ## Phase 2: Fonctionnalités Essentielles (Semaines 4-7)
 
 ### Semaine 4: Exploration et Recherche
-- [x] Développement de la page d'exploration des recettes
-- [x] Implémentation des filtres par catégorie
-- [x] Implémentation des filtres par région
-- [x] Implémentation des filtres par ingrédient
+- [ ] Développement de la page d'exploration des recettes
+- [ ] Implémentation des filtres par catégorie
 - [ ] Création de la fonctionnalité de recherche simple
 - [ ] Tests d'intégration des fonctionnalités d'exploration
+- [ ] Implémentation de la recherche multi-source
 
 ### Semaine 5: Détails des Recettes
-- [x] Conception et implémentation de la vue détaillée d'une recette
-- [x] Développement de l'affichage des ingrédients et instructions
-- [x] Implémentation de la navigation entre les recettes liées
-- [x] Optimisation du chargement des images
+- [ ] Conception et implémentation de la vue détaillée d'une recette
+- [ ] Développement de l'affichage des ingrédients et instructions
+- [ ] Implémentation de la navigation entre les recettes liées
+- [ ] Optimisation du chargement des images
+- [ ] Normalisation de l'affichage des données provenant de sources différentes
 
 ### Semaine 6: Favoris et Stockage Local
-- [x] Implémentation du service de favoris
-- [x] Développement de la base de données locale SQLite
+- [ ] Implémentation du service de favoris
+- [ ] Développement de la base de données locale SQLite
 - [ ] Création de la vue de gestion des favoris
-- [ ] Synchronisation entre l'API et la base locale
+- [ ] Synchronisation entre les APIs et la base locale
+- [ ] Stockage des métadonnées de source pour chaque recette
 
 ### Semaine 7: Recherche Avancée et Filtrage
 - [ ] Amélioration du système de recherche avec options avancées
 - [ ] Implémentation des filtres combinés
 - [ ] Développement de la page de recherche avancée
 - [ ] Tests de performance des recherches
+- [ ] Stratégies de fusion des résultats provenant de sources multiples
+
+### Semaine 7b: Optimisation des Sources de Données
+- [ ] Optimisation des stratégies de basculement entre API
+- [ ] Affinage des algorithmes de fusion des résultats de recherche
+- [ ] Tests de résilience en cas d'indisponibilité d'une API
+- [ ] Implémentation du tableau de bord de métriques d'utilisation des API
+- [ ] Interface de configuration des préférences de sources
+- [ ] Système de réinitialisation automatique des compteurs quotidiens
 
 ## Phase 3: Fonctionnalités Avancées (Semaines 8-10)
 
 ### Semaine 8: Mode Hors Connexion
-- [x] Finalisation du système de cache
-- [ ] Implémentation de la détection de la connectivité
+- [ ] Finalisation du système de cache multi-source
+- [ ] Priorisation des données en cache selon leur fraîcheur
+- [ ] Stratégies de préchargement intelligent des données
 - [ ] Adaptation de l'interface en mode hors connexion
-- [ ] Tests du comportement hors ligne
+- [ ] Tests du comportement hors ligne avec différentes combinaisons de données en cache
 
-### Semaine 9: Personnalisation et Localisation
+### Semaine 9: Personnalisation
 - [ ] Implémentation du système de thèmes (clair/sombre)
 - [ ] Développement des options de personnalisation
-- [ ] Adaptation pour le marché français
-  - [ ] Traduction de l'interface en français
-  - [ ] Conversion des unités de mesure américaines vers métriques
-  - [ ] Prise en compte des ingrédients locaux
 - [ ] Mécanisme de sauvegarde des préférences utilisateur
 - [ ] Tests d'accessibilité
+- [ ] Configuration des préférences de source d'API
 
-### Semaine 10: Planification de Repas et Liste de Courses
+### Semaine 10: Planification de Repas
 - [ ] Création de la fonctionnalité de planification hebdomadaire
-  - [ ] Interface de sélection des recettes par jour/repas
-  - [ ] Sauvegarde et modification des plans de repas
-  - [ ] Visualisation des plans de repas par semaine/mois
 - [ ] Développement du générateur de liste de courses
-  - [ ] Agrégation intelligente des ingrédients similaires
-  - [ ] Conversion et normalisation des unités de mesure
-  - [ ] Catégorisation des ingrédients par rayon de magasin
-  - [ ] Fonctionnalité de suivi d'achat (marquer comme acheté)
-- [ ] Intégration avec les favoris et recettes récentes
+- [ ] Intégration avec les favoris
 - [ ] Tests d'intégration des fonctionnalités de planification
+- [ ] Optimisation des requêtes vers les sources multiples pour la planification
 
 ## Phase 4: Polissage et Préparation à la Livraison (Semaines 11-12)
 
@@ -87,12 +95,14 @@
 - [ ] Optimisation des performances
 - [ ] Correction des bugs identifiés
 - [ ] Tests de charge et de stress
+- [ ] Vérification de l'utilisation optimale des quotas d'API
 
 ### Semaine 12: Finalisation
 - [ ] Création de l'assistant de première utilisation
 - [ ] Documentation utilisateur in-app
 - [ ] Création du programme d'installation
 - [ ] Tests finaux sur différentes configurations
+- [ ] Documentation des systèmes de gestion des sources multiples
 
 ## Phase 5: Lancement et Suivi (Post-livraison)
 
@@ -105,23 +115,27 @@
 - [ ] Correction des bugs remontés
 - [ ] Analyse des retours utilisateurs
 - [ ] Planification des fonctionnalités pour la version 2.0
+- [ ] Surveillance de l'utilisation des API et ajustement des stratégies
 
 ## Jalons Clés
 
 1. **Alpha (Fin de la Phase 2)**
    - Application fonctionnelle avec toutes les fonctionnalités essentielles
    - Interface utilisateur de base complète
-   - Connexion à l'API et stockage local fonctionnels
+   - Système multi-source fonctionnel
+   - Connexion aux APIs et stockage local opérationnels
 
 2. **Beta (Fin de la Phase 3)**
    - Toutes les fonctionnalités implémentées
    - Mode hors ligne fonctionnel
    - Personnalisation et options avancées disponibles
+   - Système de gestion des API entièrement testé
 
 3. **Release Candidate (Milieu de la Phase 4)**
    - Application stable avec performances optimisées
    - Tous les bugs majeurs corrigés
    - Documentation complète
+   - Métriques d'utilisation validées
 
 4. **Version 1.0 (Fin de la Phase 4)**
    - Produit final prêt pour le déploiement
@@ -134,3 +148,4 @@
 - **Qualité**: Nombre de tests réussis, couverture de code
 - **Performance**: Temps de réponse, utilisation des ressources
 - **Stabilité**: Nombre de crashs, exceptions non gérées
+- **Utilisation des API**: Suivi des quotas utilisés, efficacité des stratégies de basculement

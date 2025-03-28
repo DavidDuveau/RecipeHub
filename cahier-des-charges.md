@@ -3,13 +3,14 @@
 ## 1. Introduction
 
 ### 1.1 Contexte
-RecipeHub est une application de bureau destinée aux amateurs de cuisine souhaitant découvrir, organiser et sauvegarder des recettes du monde entier. L'application s'appuiera sur l'API TheMealDB pour obtenir une vaste collection de recettes et offrira une expérience utilisateur riche et intuitive.
+RecipeHub est une application de bureau destinée aux amateurs de cuisine souhaitant découvrir, organiser et sauvegarder des recettes du monde entier. L'application s'appuiera sur les API TheMealDB et Spoonacular pour obtenir une vaste collection de recettes et offrira une expérience utilisateur riche et intuitive.
 
 ### 1.2 Objectifs
 - Créer une interface utilisateur moderne et intuitive pour explorer des recettes
 - Offrir des fonctionnalités avancées de recherche et de filtrage
 - Permettre aux utilisateurs de sauvegarder et d'organiser leurs recettes préférées
 - Fournir une expérience utilisateur fluide même en mode hors connexion
+- Assurer une disponibilité maximale des recettes via des sources multiples
 
 ## 2. Spécifications Fonctionnelles
 
@@ -46,33 +47,33 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 - Mise en cache des recettes récemment consultées
 - Indication visuelle des fonctionnalités disponibles hors ligne
 
+#### 2.1.6 Sources de Données Multiples
+- Intégration simultanée des API TheMealDB et Spoonacular
+- Système intelligent de basculement entre les sources
+- Affichage unifié des données indépendamment de leur origine
+- Indicateur optionnel de la source pour chaque recette
+- Prioritisation configurable des sources selon les préférences utilisateur
+- Gestion persistante des quotas d'API entre les sessions de l'application
+
 ### 2.2 Fonctionnalités Secondaires
 
 #### 2.2.1 Personnalisation
 - Thème clair/sombre
 - Ajustement de la taille des polices
 - Personnalisation de la disposition des éléments
-- Localisation pour le marché français
-  - Interface en français
-  - Unités de mesure métriques
-  - Adaptation aux ingrédients disponibles en France
 
-#### 2.2.2 Planification de Repas et Liste de Courses
-- Création de menus hebdomadaires ou mensuels
-- Sélection des recettes par jour et type de repas (petit-déjeuner, déjeuner, dîner)
-- Génération automatique de listes de courses basées sur les recettes sélectionnées
-  - Agrégation intelligente des ingrédients (regroupement des quantités)
-  - Normalisation des unités de mesure quand possible
-  - Organisation par catégories de produits (produits frais, épicerie, etc.)
-- Fonctionnalités de gestion de liste
-  - Marquage des éléments comme achetés
-  - Ajout manuel d'articles supplémentaires
-  - Modification des quantités
-  - Suppression d'éléments non désirés
+#### 2.2.2 Planification de Repas
+- Création de menus hebdomadaires
+- Génération de listes de courses basées sur les recettes sélectionnées
 
 #### 2.2.3 Partage et Exportation
 - Partage de recettes via email ou réseaux sociaux
 - Exportation des recettes en format PDF ou texte
+
+#### 2.2.4 Gestion des API
+- Suivi de l'utilisation des API avec indicateurs visuels
+- Possibilité de configuration manuelle de la source préférée
+- Visualisation des quotas restants pour chaque API
 
 ## 3. Spécifications Techniques
 
@@ -90,6 +91,14 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 - Views : fichiers XAML et code-behind
 - Helpers : classes utilitaires
 
+#### 3.1.3 Architecture des Services
+- Mise en place d'une interface commune `IRecipeProvider`
+- Implémentation de fournisseurs spécifiques pour chaque API
+- Service d'agrégation centralisant l'accès aux différentes sources
+- Système de cache optimisé pour minimiser les appels API
+- Gestionnaire de limites d'API pour prévenir les dépassements
+- Persistence des métriques d'usage entre les sessions de l'application
+
 ### 3.2 Technologies et Frameworks
 
 #### 3.2.1 Framework Principal
@@ -105,6 +114,7 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 - NLog (journalisation)
 - AutoMapper (mapping d'objets)
 - Moq et xUnit (tests unitaires)
+- Polly (gestion des politiques de retry et circuit-breaker)
 
 ### 3.3 Exigences Système
 - Windows 10 ou supérieur
@@ -115,6 +125,7 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 ### 3.4 Stockage des Données
 - Base de données SQLite pour les favoris et les données hors ligne
 - Stockage des images en cache local
+- Persistance des métriques d'utilisation des API
 
 ### 3.5 Sécurité
 - Chiffrement des données sensibles stockées localement
@@ -135,6 +146,7 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 - Cartes de recettes avec aperçu
 - Vue détaillée de recette
 - Gestionnaire de collections
+- Indicateurs d'utilisation d'API et de disponibilité
 
 ### 4.3 Flux Utilisateur
 - Parcours de découverte (exploration des recettes)
@@ -144,12 +156,14 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 ## 5. Contraintes et Limitations
 
 ### 5.1 Contraintes Techniques
-- Dépendance à l'API TheMealDB (limites d'appels API gratuites)
+- Gestion des limites d'appels API (150/jour pour Spoonacular, 1000/jour pour TheMealDB)
+- Stratégies de mise en cache adaptées aux différentes sources
+- Réconciliation des données hétérogènes entre les sources
 - Application limitée aux systèmes Windows
 - Nécessité d'une connexion Internet pour les fonctionnalités complètes
 
 ### 5.2 Contraintes Légales
-- Respect des conditions d'utilisation de l'API TheMealDB
+- Respect des conditions d'utilisation des API TheMealDB et Spoonacular
 - Gestion des informations utilisateur conforme au RGPD
 
 ## 6. Livrables Attendus
@@ -172,3 +186,5 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 - L'application doit être stable avec un taux d'erreur minimal
 - Les temps de chargement doivent être optimisés
 - La consommation de ressources doit être raisonnable
+- Le basculement entre les sources de données doit être transparent pour l'utilisateur
+- Les métriques d'utilisation des API doivent être correctement persistées entre les sessions

@@ -11,6 +11,7 @@ Cette charte établit les principes directeurs, standards et bonnes pratiques à
 - **Lisibilité** : Écrire du code compréhensible par tous les membres de l'équipe
 - **Testabilité** : Développer en pensant à la possibilité de tester chaque composant
 - **Cohérence** : Maintenir des approches et des styles cohérents dans toute la base de code
+- **Résilience** : Concevoir des systèmes robustes pouvant fonctionner même en conditions dégradées
 
 ## 2. Architecture et Structure
 
@@ -26,16 +27,19 @@ L'application suit strictement le pattern MVVM (Model-View-ViewModel) :
 RecipeHub/
 ├── RecipeHub.Core/            # Modèles, interfaces et contrats
 ├── RecipeHub.Services/        # Services d'accès aux données et logique métier
+│   ├── Providers/             # Implémentations spécifiques pour chaque API
+│   ├── Cache/                 # Services de mise en cache
+│   └── Metrics/               # Système de suivi des métriques d'API
 ├── RecipeHub.UI/              # Application WPF principale
 │   ├── App.xaml
-│   ├── Assets/               # Ressources statiques (images, icônes)
-│   ├── Controls/             # Contrôles utilisateur personnalisés
-│   ├── Converters/           # Convertisseurs de valeurs
-│   ├── Helpers/              # Classes utilitaires
-│   ├── Resources/            # Ressources partagées (styles, templates)
-│   ├── ViewModels/           # ViewModels de l'application
-│   └── Views/                # Vues de l'application
-└── RecipeHub.Tests/          # Tests unitaires et d'intégration
+│   ├── Assets/                # Ressources statiques (images, icônes)
+│   ├── Controls/              # Contrôles utilisateur personnalisés
+│   ├── Converters/            # Convertisseurs de valeurs
+│   ├── Helpers/               # Classes utilitaires
+│   ├── Resources/             # Ressources partagées (styles, templates)
+│   ├── ViewModels/            # ViewModels de l'application
+│   └── Views/                 # Vues de l'application
+└── RecipeHub.Tests/           # Tests unitaires et d'intégration
 ```
 
 ### 2.3 Principes d'Architecture
@@ -43,6 +47,7 @@ RecipeHub/
 - Favoriser l'injection de dépendances
 - Suivre le principe d'inversion de dépendance
 - Limiter le couplage entre les composants
+- Utiliser des abstractions pour les sources de données externes
 
 ## 3. Standards de Codage
 
@@ -53,6 +58,7 @@ RecipeHub/
 - Préfixer les champs privés avec "_" (ex: _recipeService)
 - Suffixer les classes ViewModel avec "ViewModel" (ex: RecipeDetailsViewModel)
 - Suffixer les classes View avec "View" ou "Page" (ex: RecipeDetailsView)
+- Suffixer les classes Provider avec "Provider" (ex: SpoonacularProvider)
 
 ### 3.2 Organisation du Code
 - Limiter les fichiers à 500 lignes maximum
@@ -65,6 +71,7 @@ RecipeHub/
 - Documenter les algorithmes complexes avec des commentaires en ligne
 - Maintenir à jour les fichiers README de chaque projet
 - Expliquer le "pourquoi" plutôt que le "comment" dans les commentaires
+- Documenter clairement les stratégies de basculement entre APIs
 
 ### 3.4 Formatage
 - Utiliser 4 espaces pour l'indentation (pas de tabulations)
@@ -110,6 +117,21 @@ RecipeHub/
 - Éviter de passer des objets complexes via les paramètres de navigation
 - Nettoyer les ressources lors de la navigation
 
+### 5.4 Gestion des Sources Multiples
+- Implémenter le pattern Adapter pour uniformiser les données provenant de sources hétérogènes
+- Utiliser le pattern Strategy pour la sélection dynamique des sources
+- Appliquer des politiques de Circuit Breaker pour gérer les échecs d'API
+- Concevoir un système de cache avec reconnaissance de la source
+- Implémenter un système de métriques pour surveiller l'utilisation des différentes API
+- Assurer la persistance des données d'utilisation entre les sessions de l'application
+
+### 5.5 Gestion des Métriques d'API
+- Utiliser SQLite pour persister les métriques d'utilisation
+- Implémenter un mécanisme de réinitialisation quotidienne automatique
+- Vérifier systématiquement les limites avant chaque appel API
+- Prévoir des stratégies de dégradation progressive des fonctionnalités
+- Journaliser tous les changements d'état des compteurs d'API
+
 ## 6. Tests et Qualité du Code
 
 ### 6.1 Tests Unitaires
@@ -117,6 +139,7 @@ RecipeHub/
 - Viser une couverture de code d'au moins 80%
 - Utiliser des mocks pour isoler les composants sous test
 - Nommer les tests selon le pattern "MethodName_Scenario_ExpectedBehavior"
+- Tester particulièrement les scénarios de basculement entre sources de données
 
 ### 6.2 Analyse Statique
 - Maintenir un code sans avertissements du compilateur
@@ -127,6 +150,7 @@ RecipeHub/
 - Toutes les modifications doivent passer par une revue de code
 - Vérifier la conformité aux standards de cette charte
 - Tester manuellement les fonctionnalités modifiées avant la fusion
+- Porter une attention particulière aux mécanismes de gestion des APIs
 
 ## 7. Gestion de Version et Source Control
 
@@ -164,6 +188,13 @@ RecipeHub/
 - Utiliser des outils de profilage pour identifier les goulots d'étranglement
 - Établir des benchmarks pour les opérations critiques
 - Surveiller les métriques de performance pendant le développement
+- Suivre l'efficacité des stratégies de basculement entre APIs
+
+### 8.4 Optimisation des Appels API
+- Minimiser le nombre d'appels API via des stratégies de cache agressives
+- Regrouper les requêtes lorsque possible
+- Implémenter des mécanismes de préchargement intelligents
+- Préférer les recherches précises aux recherches larges
 
 ## 9. Sécurité
 
@@ -183,11 +214,13 @@ RecipeHub/
 - Maintenir un wiki ou une documentation Markdown à jour
 - Documenter les décisions d'architecture importantes
 - Créer des diagrammes pour les flux complexes
+- Documenter en détail les stratégies de gestion multi-API
 
 ### 10.2 Documentation Utilisateur
 - Développer une aide contextuelle dans l'application
 - Créer un guide utilisateur complet
 - Documenter les fonctionnalités et les limites connues
+- Expliquer les indicateurs d'utilisation d'API et leur signification
 
 ## 11. Déploiement et Distribution
 
@@ -207,11 +240,19 @@ RecipeHub/
 - Créer une hiérarchie d'exceptions spécifiques à l'application
 - Logger toutes les exceptions avec suffisamment de contexte
 - Présenter des messages d'erreur utiles aux utilisateurs
+- Gérer spécifiquement les exceptions liées aux APIs externes
 
 ### 12.2 Logging
 - Implémenter différents niveaux de logging (Debug, Info, Warning, Error)
 - Inclure des informations contextuelles dans les logs
 - Configurer la rotation et la rétention des logs
+- Tracer tous les basculements entre sources de données
+
+### 12.3 Stratégies de Résilience
+- Implémenter des timeouts appropriés pour les appels API
+- Utiliser des politiques de retry avec backoff exponentiel
+- Mettre en place des circuit breakers pour les services instables
+- Définir des chemins de dégradation gracieuse des fonctionnalités
 
 ## 13. Maintenance Continue
 
@@ -225,6 +266,12 @@ RecipeHub/
 - Effectuer des refactorings ciblés plutôt que des réécritures complètes
 - Toujours avoir une couverture de tests avant de refactoriser
 
+### 13.3 Surveillance des APIs
+- Vérifier régulièrement les conditions d'utilisation des APIs externes
+- Surveiller les changements dans les contrats d'API
+- Planifier les évolutions nécessaires en cas de modification des services tiers
+- Maintenir à jour les clés API et les quotas associés
+
 ## 14. Engagement et Responsabilités
 
 En tant que développeur sur le projet RecipeHub, je m'engage à :
@@ -234,3 +281,4 @@ En tant que développeur sur le projet RecipeHub, je m'engage à :
 - Partager mes connaissances avec l'équipe
 - Signaler les problèmes dès qu'ils sont identifiés
 - Rester à jour avec les meilleures pratiques .NET et WPF
+- Veiller à l'utilisation optimale et éthique des ressources API externes
