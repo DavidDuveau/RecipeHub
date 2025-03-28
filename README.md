@@ -4,25 +4,31 @@ Application de bureau destinée aux amateurs de cuisine pour découvrir, organis
 
 ## Description
 
-RecipeHub est une application WPF qui permet aux utilisateurs d'explorer une vaste collection de recettes provenant de l'API TheMealDB. 
+RecipeHub est une application WPF qui permet aux utilisateurs d'explorer une vaste collection de recettes provenant des APIs TheMealDB et Spoonacular. 
 L'application offre des fonctionnalités avancées de recherche et de filtrage, ainsi que la possibilité de sauvegarder des recettes favorites 
-pour un accès hors ligne.
+pour un accès hors ligne. Le système de basculement entre les sources permet d'optimiser l'utilisation des quotas d'API.
 
 ## Fonctionnalités
 
 - **Exploration des recettes** : Parcourez des recettes par catégories, régions ou ingrédients
 - **Recherche avancée** : Trouvez des recettes selon vos critères de recherche
+- **Sources multiples** : Accédez aux recettes de TheMealDB et Spoonacular avec basculement automatique entre les sources
 - **Favoris** : Sauvegardez vos recettes préférées pour un accès rapide
 - **Mode hors connexion** : Accédez à vos recettes favorites même sans connexion internet
 - **Gestion des collections** : Organisez vos recettes dans des collections personnalisées
 - **Personnalisation** : Adaptez l'interface à vos préférences avec les thèmes clair/sombre
+- **Gestion des APIs** : Visualisez et gérez l'utilisation de vos quotas d'API
 
 ## Structure du projet
 
 Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
 
 - **RecipeHub.Core** : Contient les modèles et interfaces de base
-- **RecipeHub.Services** : Implémente les services d'accès aux données (API, stockage local)
+- **RecipeHub.Services** : Implémente les services d'accès aux données (API, stockage local, cache, métriques)
+  - **API** : Services d'accès aux APIs de recettes (TheMealDB, Spoonacular)
+  - **Cache** : Services de mise en cache des données
+  - **Metrics** : Gestion des métriques d'utilisation des APIs
+  - **Data** : Services de persistance locale des données
 - **RecipeHub.UI** : Application WPF principale avec les vues et ViewModels
 - **RecipeHub.Tests** : Tests unitaires et d'intégration
 
@@ -56,8 +62,12 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
 - [x] Définition des interfaces principales
 - [x] Création des modèles de données de base
 - [x] Implémentation des services d'accès à l'API
+  - [x] Service TheMealDB
+  - [x] Service Spoonacular
+  - [x] Service d'agrégation des sources
 - [x] Mise en place du système de cache
 - [x] Développement des méthodes principales d'accès aux données
+- [x] Gestion des métriques d'utilisation des APIs
 - [x] Mise en place du stockage local (favoris)
 - [ ] Développement de l'interface utilisateur
   - [x] Interface principale (ShellView)
@@ -71,18 +81,19 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
     - [x] Intégration des recettes similaires
   - [ ] Page des favoris (FavoritesView)
   - [ ] Page de recherche (SearchView)
+  - [ ] Interface de gestion des APIs (ApiManagementView)
 - [x] Correction des problèmes de compilation
   - [x] Résolution des erreurs de références aux convertisseurs
   - [x] Adaptation des composants UI pour compatibilité MaterialDesign
 
 ## Dernières modifications
 
-- Implémentation de la page de détails des recettes (RecipeDetailsView)
-- Ajout du convertisseur IntToVisibilityConverter pour améliorer l'interface utilisateur
-- Navigation entre les recettes et affichage des recettes similaires
-- Correction des erreurs de compilation liées aux convertisseurs
-- Refactoring de l'interface d'exploration des recettes
-- Remplacement de TextBox.LeadingIcon par une approche compatible avec la version actuelle de MaterialDesignInXAML
+- Implémentation du système multi-source avec TheMealDB et Spoonacular
+- Mise en place du service d'agrégation de recettes pour gérer les différentes sources
+- Implémentation du service de métriques d'utilisation des APIs
+- Création du système de persistance des métriques avec SQLite
+- Gestion intelligente du basculement entre les sources en fonction des quotas disponibles
+- Organisation modulaire du fournisseur Spoonacular pour une meilleure maintenabilité
 
 ## Roadmap
 
