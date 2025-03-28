@@ -52,6 +52,10 @@ RecipeHub est une application de bureau destinée aux amateurs de cuisine souhai
 - Thème clair/sombre
 - Ajustement de la taille des polices
 - Personnalisation de la disposition des éléments
+- Localisation pour le marché français
+  - Interface en français
+  - Unités de mesure métriques
+  - Adaptation aux ingrédients disponibles en France
 
 #### 2.2.2 Planification de Repas et Liste de Courses
 - Création de menus hebdomadaires ou mensuels

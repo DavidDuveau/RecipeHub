@@ -57,9 +57,13 @@
 - [ ] Adaptation de l'interface en mode hors connexion
 - [ ] Tests du comportement hors ligne
 
-### Semaine 9: Personnalisation
+### Semaine 9: Personnalisation et Localisation
 - [ ] Implémentation du système de thèmes (clair/sombre)
 - [ ] Développement des options de personnalisation
+- [ ] Adaptation pour le marché français
+  - [ ] Traduction de l'interface en français
+  - [ ] Conversion des unités de mesure américaines vers métriques
+  - [ ] Prise en compte des ingrédients locaux
 - [ ] Mécanisme de sauvegarde des préférences utilisateur
 - [ ] Tests d'accessibilité
 
