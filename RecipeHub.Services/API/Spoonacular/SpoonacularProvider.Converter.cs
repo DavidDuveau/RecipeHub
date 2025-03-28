@@ -110,7 +110,7 @@ namespace RecipeHub.Services.API.Spoonacular
                     recipe.Ingredients.Add(new Ingredient
                     {
                         Name = extendedIngredient.Name ?? extendedIngredient.OriginalName ?? string.Empty,
-                        Quantity = measure
+                        Measure = measure
                     });
                 }
             }
