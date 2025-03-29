@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using RecipeHub.Core.Models;
+using RecipeHub.Services.Models;
 using RestSharp;
 using System;
 using System.Collections.Generic;

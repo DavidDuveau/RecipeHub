@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using RecipeHub.Core.Interfaces;
+using RecipeHub.Core.Models;
 using RecipeHub.Services.API;
 using RecipeHub.Services.API.Spoonacular;
 using RecipeHub.Services.Cache;
