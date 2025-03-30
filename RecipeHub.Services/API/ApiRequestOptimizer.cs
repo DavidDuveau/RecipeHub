@@ -21,7 +21,7 @@ namespace RecipeHub.Services.API
         private readonly TimeSpan _minimumRequestInterval = TimeSpan.FromMilliseconds(100);
         
         // Configuration des stratégies par fournisseur
-        private readonly Dictionary<string, OptimizationStrategy> _providerStrategies = new Dictionary<string, OptimizationStrategy>();
+        private readonly Dictionary<string, Core.Interfaces.OptimizationStrategy> _providerStrategies = new Dictionary<string, Core.Interfaces.OptimizationStrategy>();
         
         /// <summary>
         /// Constructeur du service d'optimisation des requêtes.
@@ -39,7 +39,7 @@ namespace RecipeHub.Services.API
         /// </summary>
         /// <param name="providerName">Nom du fournisseur</param>
         /// <param name="strategy">Stratégie d'optimisation</param>
-        public void SetProviderStrategy(string providerName, OptimizationStrategy strategy)
+        public void SetProviderStrategy(string providerName, Core.Interfaces.OptimizationStrategy strategy)
         {
             if (string.IsNullOrWhiteSpace(providerName))
                 throw new ArgumentException("Le nom du fournisseur ne peut pas être vide.", nameof(providerName));
@@ -52,7 +52,7 @@ namespace RecipeHub.Services.API
         /// </summary>
         /// <param name="providerName">Nom du fournisseur</param>
         /// <returns>Stratégie d'optimisation</returns>
-        public OptimizationStrategy GetProviderStrategy(string providerName)
+        public Core.Interfaces.OptimizationStrategy GetProviderStrategy(string providerName)
         {
             if (string.IsNullOrWhiteSpace(providerName))
                 throw new ArgumentException("Le nom du fournisseur ne peut pas être vide.", nameof(providerName));
@@ -61,7 +61,7 @@ namespace RecipeHub.Services.API
                 return strategy;
                 
             // Stratégie par défaut
-            return OptimizationStrategy.Balanced;
+            return Core.Interfaces.OptimizationStrategy.Balanced;
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace RecipeHub.Services.API
                     
                     switch (strategy)
                     {
-                        case OptimizationStrategy.ConservativeQuota:
+                        case Core.Interfaces.OptimizationStrategy.ConservativeQuota:
                             // En mode conservateur, on ne fait pas l'appel si on est à plus de 90% du quota
                             var metrics = await _metricsService.GetProviderMetricsAsync(providerName);
                             if (metrics != null && metrics.GetUsagePercentage() > 90)
@@ -111,11 +111,11 @@ namespace RecipeHub.Services.API
                             }
                             break;
                             
-                        case OptimizationStrategy.QuotaProtection:
+                        case Core.Interfaces.OptimizationStrategy.QuotaProtection:
                             // En mode protection, on refuse l'appel si le quota est dépassé
                             throw new QuotaExceededException($"Le quota pour {providerName} est épuisé.");
                             
-                        case OptimizationStrategy.Fallback:
+                        case Core.Interfaces.OptimizationStrategy.Fallback:
                             // En mode fallback, on cherche un autre fournisseur avec des quotas disponibles
                             var alternateProvider = await _metricsService.GetRecommendedProviderAsync();
                             if (alternateProvider != null && alternateProvider != providerName)
@@ -350,32 +350,6 @@ namespace RecipeHub.Services.API
 
             return aggregatedResult;
         }
-    }
-
-    /// <summary>
-    /// Stratégies d'optimisation des requêtes API.
-    /// </summary>
-    public enum OptimizationStrategy
-    {
-        /// <summary>
-        /// Stratégie équilibrée : utilisation normale des quotas disponibles.
-        /// </summary>
-        Balanced,
-
-        /// <summary>
-        /// Stratégie conservatrice : préserve les quotas pour les requêtes importantes.
-        /// </summary>
-        ConservativeQuota,
-
-        /// <summary>
-        /// Stratégie de protection stricte : refuse les appels lorsque le quota est dépassé.
-        /// </summary>
-        QuotaProtection,
-
-        /// <summary>
-        /// Stratégie de repli : bascule vers un autre fournisseur lorsque le quota est dépassé.
-        /// </summary>
-        Fallback
     }
 
     /// <summary>

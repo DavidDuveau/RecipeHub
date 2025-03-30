@@ -49,8 +49,79 @@ namespace RecipeHub.Services.API
             // Configuration des stratégies d'optimisation par défaut
             foreach (var provider in _providers)
             {
-                _requestOptimizer.SetProviderStrategy(provider.ProviderName, OptimizationStrategy.Balanced);
+                _requestOptimizer.SetProviderStrategy(provider.ProviderName, Core.Interfaces.OptimizationStrategy.Balanced);
             }
+        }
+
+        /// <summary>
+        /// Définit l'ordre de priorité des fournisseurs.
+        /// </summary>
+        /// <param name="providerOrder">Liste ordonnée des noms de fournisseurs</param>
+        public void SetProviderPriority(List<string> providerOrder)
+        {
+            if (providerOrder == null)
+                throw new ArgumentNullException(nameof(providerOrder));
+
+            // Vérifier que tous les noms sont valides
+            foreach (var providerName in providerOrder)
+            {
+                if (!_providers.Any(p => p.ProviderName == providerName))
+                    throw new ArgumentException($"Fournisseur inconnu : {providerName}", nameof(providerOrder));
+            }
+
+            // Vérifier que tous les fournisseurs sont inclus
+            var providersNotIncluded = _providers.Select(p => p.ProviderName)
+                .Except(providerOrder)
+                .ToList();
+
+            if (providersNotIncluded.Any())
+            {
+                // Ajouter les fournisseurs manquants à la fin de la liste
+                providerOrder.AddRange(providersNotIncluded);
+            }
+
+            _providerPriority = providerOrder;
+        }
+
+        /// <summary>
+        /// Obtient l'ordre de priorité actuel des fournisseurs.
+        /// </summary>
+        /// <returns>Liste ordonnée des noms de fournisseurs</returns>
+        public List<string> GetProviderPriority()
+        {
+            return new List<string>(_providerPriority);
+        }
+
+        /// <summary>
+        /// Obtient les stratégies d'optimisation pour tous les fournisseurs.
+        /// </summary>
+        /// <returns>Dictionnaire associant le nom du fournisseur à sa stratégie d'optimisation</returns>
+        public Dictionary<string, Core.Interfaces.OptimizationStrategy> GetProviderOptimizationStrategies()
+        {
+            var strategies = new Dictionary<string, Core.Interfaces.OptimizationStrategy>();
+            
+            foreach (var provider in _providers)
+            {
+                strategies[provider.ProviderName] = _requestOptimizer.GetProviderStrategy(provider.ProviderName);
+            }
+            
+            return strategies;
+        }
+
+        /// <summary>
+        /// Définit la stratégie d'optimisation pour un fournisseur spécifique.
+        /// </summary>
+        /// <param name="providerName">Nom du fournisseur</param>
+        /// <param name="strategy">Stratégie d'optimisation</param>
+        public void SetProviderOptimizationStrategy(string providerName, Core.Interfaces.OptimizationStrategy strategy)
+        {
+            if (string.IsNullOrWhiteSpace(providerName))
+                throw new ArgumentException("Le nom du fournisseur ne peut pas être vide.", nameof(providerName));
+                
+            if (!_providers.Any(p => p.ProviderName == providerName))
+                throw new ArgumentException($"Fournisseur inconnu : {providerName}", nameof(providerName));
+                
+            _requestOptimizer.SetProviderStrategy(providerName, strategy);
         }
     }
 }
