@@ -1,0 +1,217 @@
+<UserControl x:Class="RecipeHub.UI.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RecipeHub.UI.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:RecipeHub.UI.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+        <converters:BoolToSuccessColorConverter x:Key="BoolToSuccessColorConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- En-tête -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Paramètres" 
+                       Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
+                       Margin="0,0,0,10"/>
+            <TextBlock Text="Sauvegarde, restauration et gestion des données" 
+                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
+                       Opacity="0.6"/>
+            <Separator Margin="0,10,0,0"/>
+        </StackPanel>
+        
+        <!-- Contenu principal -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Statistiques -->
+                <materialDesign:Card Margin="0,0,0,20" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="ChartBar" 
+                                                    VerticalAlignment="Center" 
+                                                    Width="24" 
+                                                    Height="24" 
+                                                    Margin="0,0,8,0"/>
+                            <TextBlock Text="Statistiques" 
+                                      Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                            <Button Command="{Binding RefreshStatisticsCommand}" 
+                                    Style="{StaticResource MaterialDesignFlatButton}" 
+                                    ToolTip="Rafraîchir" 
+                                    Margin="8,0,0,0">
+                                <materialDesign:PackIcon Kind="Refresh" />
+                            </Button>
+                        </StackPanel>
+                        
+                        <Separator Margin="0,0,0,10"/>
+                        
+                        <ItemsControl ItemsSource="{Binding Statistics}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Key}" Grid.Column="0"/>
+                                        <TextBlock Text="{Binding Value}" Grid.Column="1" 
+                                                 FontWeight="Bold"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <TextBlock Text="Aucune donnée disponible." 
+                                  Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                  Opacity="0.6" 
+                                  Margin="0,10,0,0"
+                                  Visibility="{Binding Statistics.Count, Converter={StaticResource IntToVisibilityConverter}, ConverterParameter=0}"/>
+                    </StackPanel>
+                </materialDesign:Card>
+                
+                <!-- Exportation et importation -->
+                <materialDesign:Card Margin="0,0,0,20" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="DatabaseExport" 
+                                                    VerticalAlignment="Center" 
+                                                    Width="24" 
+                                                    Height="24" 
+                                                    Margin="0,0,8,0"/>
+                            <TextBlock Text="Exportation et importation" 
+                                      Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                        </StackPanel>
+                        
+                        <Separator Margin="0,0,0,10"/>
+                        
+                        <TextBlock Text="Exportez vos données (favoris, collections, plans de repas, listes de courses) au format JSON pour les sauvegarder ou les transférer. Vous pouvez également importer des données depuis un fichier JSON précédemment exporté." 
+                                  Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                  TextWrapping="Wrap" 
+                                  Margin="0,0,0,10"/>
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Command="{Binding ImportDataCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                    Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Import" 
+                                                           VerticalAlignment="Center" 
+                                                           Margin="0,0,8,0"/>
+                                    <TextBlock Text="Importer"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding ExportDataCommand}" 
+                                    Style="{StaticResource MaterialDesignRaisedButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Export" 
+                                                           VerticalAlignment="Center" 
+                                                           Margin="0,0,8,0"/>
+                                    <TextBlock Text="Exporter"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+                
+                <!-- Sauvegarde et restauration -->
+                <materialDesign:Card Margin="0,0,0,20" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="DatabaseSync" 
+                                                    VerticalAlignment="Center" 
+                                                    Width="24" 
+                                                    Height="24" 
+                                                    Margin="0,0,8,0"/>
+                            <TextBlock Text="Sauvegarde et restauration" 
+                                      Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                        </StackPanel>
+                        
+                        <Separator Margin="0,0,0,10"/>
+                        
+                        <TextBlock Text="Créez une sauvegarde complète de votre base de données SQLite ou restaurez une sauvegarde précédente. La restauration remplace toutes vos données actuelles et nécessite un redémarrage de l'application." 
+                                  Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                  TextWrapping="Wrap" 
+                                  Margin="0,0,0,10"/>
+                        
+                        <materialDesign:Card Background="#FFF9E8" 
+                                           Margin="0,0,0,10" 
+                                           Padding="8">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="AlertCircle" 
+                                                       VerticalAlignment="Center" 
+                                                       Foreground="#E6A700" 
+                                                       Margin="8,0"/>
+                                <TextBlock Text="La restauration remplace définitivement toutes vos données actuelles. Assurez-vous d'avoir une sauvegarde récente avant de procéder." 
+                                         Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                         TextWrapping="Wrap" 
+                                         Foreground="#704D00"/>
+                            </StackPanel>
+                        </materialDesign:Card>
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Command="{Binding RestoreDatabaseCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                    Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="DatabaseImport" 
+                                                           VerticalAlignment="Center" 
+                                                           Margin="0,0,8,0"/>
+                                    <TextBlock Text="Restaurer"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding BackupDatabaseCommand}" 
+                                    Style="{StaticResource MaterialDesignRaisedButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="DatabaseExport" 
+                                                           VerticalAlignment="Center" 
+                                                           Margin="0,0,8,0"/>
+                                    <TextBlock Text="Sauvegarder"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- Pied de page / Statut -->
+        <Border Grid.Row="2" 
+                BorderThickness="0,1,0,0" 
+                BorderBrush="{DynamicResource MaterialDesignDivider}" 
+                Padding="0,16,0,0" 
+                Margin="0,20,0,0">
+            <Grid>
+                <TextBlock Text="{Binding StatusMessage}" 
+                          VerticalAlignment="Center" 
+                          Foreground="{Binding IsStatusSuccess, Converter={StaticResource BoolToSuccessColorConverter}}"/>
+                <ProgressBar IsIndeterminate="True" 
+                            Style="{StaticResource MaterialDesignLinearProgressBar}" 
+                            HorizontalAlignment="Stretch" 
+                            Height="4" 
+                            Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </Grid>
+        </Border>
+        
+        <!-- Indicateur d'activité pendant le chargement -->
+        <Grid Grid.RowSpan="3" 
+              Background="#88000000" 
+              Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                        Value="0" 
+                        IsIndeterminate="True" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Center"/>
+        </Grid>
+    </Grid>
+</UserControl>
