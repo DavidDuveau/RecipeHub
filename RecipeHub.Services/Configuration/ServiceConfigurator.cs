@@ -68,6 +68,9 @@ namespace RecipeHub.Services.Configuration
             services.AddSingleton<IRecipeProvider, MealDbAdapter>(provider => 
                 new MealDbAdapter(provider.GetRequiredService<IMealDbService>()));
                 
+            // Enregistrer le service d'optimisation des requêtes API
+            services.AddSingleton<IApiRequestOptimizer, ApiRequestOptimizer>();
+            
             // Enregistrer le service d'agrégation
             services.AddSingleton<IAggregateRecipeService, AggregateRecipeService>();
             

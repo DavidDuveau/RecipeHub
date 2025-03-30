@@ -12,7 +12,7 @@
 ### Semaine 2: Services Core et API ✅
 - [x] Définition et implémentation de l'interface `IRecipeProvider`
 - [x] Développement du `MealDbProvider` (connexion à l'API TheMealDB)
-- [x] Développement du `SpoonacularProvider` (connexion à l'API Spoonacular) ✓ Complété et corrigé (29/03/2025)
+- [x] Développement du `SpoonacularProvider` (connexion à l'API Spoonacular)
 - [x] Implémentation du service d'agrégation `AggregateRecipeService`
 - [x] Création du système de cache multi-source
 - [x] Implémentation du système de gestion des limites d'API avec persistance
@@ -21,7 +21,7 @@
 
 ### Semaine 3: Base de l'Interface Utilisateur ✅
 - [x] Design de la navigation principale
-- [x] Mise en place des styles et thèmes de base ✓ Convertisseurs correctement inclus (29/03/2025)
+- [x] Mise en place des styles et thèmes de base
 - [x] Création de la page d'accueil (shell)
 - [x] Configuration du système de navigation entre les vues
 - [x] Conception d'une interface unifiée indépendante de la source des données
