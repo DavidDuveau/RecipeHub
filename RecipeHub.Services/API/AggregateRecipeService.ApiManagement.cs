@@ -95,48 +95,5 @@ namespace RecipeHub.Services.API
                 }
             }
         }
-
-        /// <summary>
-        /// Obtient l'ordre de priorité actuel des fournisseurs.
-        /// </summary>
-        /// <returns>Liste ordonnée des noms de fournisseurs</returns>
-        public List<string> GetProviderPriority()
-        {
-            return new List<string>(_providerPriority);
-        }
-        
-        /// <summary>
-        /// Obtient les stratégies d'optimisation pour tous les fournisseurs.
-        /// </summary>
-        /// <returns>Dictionnaire associant le nom du fournisseur à sa stratégie d'optimisation</returns>
-        public Dictionary<string, OptimizationStrategy> GetProviderOptimizationStrategies()
-        {
-            var result = new Dictionary<string, OptimizationStrategy>();
-            
-            foreach (var provider in _providers)
-            {
-                var strategy = _requestOptimizer.GetProviderStrategy(provider.ProviderName);
-                result[provider.ProviderName] = strategy;
-            }
-            
-            return result;
-        }
-        
-        /// <summary>
-        /// Définit la stratégie d'optimisation pour un fournisseur spécifique.
-        /// </summary>
-        /// <param name="providerName">Nom du fournisseur</param>
-        /// <param name="strategy">Stratégie d'optimisation</param>
-        public void SetProviderOptimizationStrategy(string providerName, OptimizationStrategy strategy)
-        {
-            if (string.IsNullOrWhiteSpace(providerName))
-                throw new ArgumentException("Le nom du fournisseur ne peut pas être vide.", nameof(providerName));
-                
-            var provider = _providers.FirstOrDefault(p => p.ProviderName.Equals(providerName, StringComparison.OrdinalIgnoreCase));
-            if (provider == null)
-                throw new ArgumentException($"Le fournisseur '{providerName}' n'existe pas.", nameof(providerName));
-                
-            _requestOptimizer.SetProviderStrategy(providerName, strategy);
-        }
     }
 }
