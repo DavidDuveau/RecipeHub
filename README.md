@@ -94,6 +94,8 @@ Le projet est structuré suivant le pattern MVVM (Model-View-ViewModel) :
 - Création du système de persistance des métriques avec SQLite
 - Gestion intelligente du basculement entre les sources en fonction des quotas disponibles
 - Organisation modulaire du fournisseur Spoonacular pour une meilleure maintenabilité
+- Implémentation complète de l'interface IAggregateRecipeService avec gestion des stratégies d'optimisation
+- Correction des références pour utiliser l'énumération OptimizationStrategy du Core
 
 ## Roadmap
 
