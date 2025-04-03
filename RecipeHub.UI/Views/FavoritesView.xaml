@@ -205,35 +205,31 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <materialDesign:Chip Content="{Binding}" 
-                                                                      Margin="2" 
-                                                                      Height="24" />
+                                                                      Margin="2" />
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </StackPanel>
 
-                                    <!-- Actions de la recette -->
-                                    <StackPanel Grid.Row="2" 
-                                              Orientation="Horizontal" 
-                                              HorizontalAlignment="Right" 
-                                              Margin="16,0,16,16">
+                                    <!-- Boutons d'action -->
+                                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8">
                                         <Button Style="{StaticResource MaterialDesignIconButton}"
-                                               Command="{Binding DataContext.RemoveFavoriteCommand, 
-                                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                               CommandParameter="{Binding}"
-                                               ToolTip="Retirer des favoris">
-                                            <materialDesign:PackIcon Kind="HeartOff" />
+                                              Command="{Binding DataContext.ViewRecipeDetailsCommand, 
+                                                       RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                              CommandParameter="{Binding}"
+                                              ToolTip="Voir les détails">
+                                            <materialDesign:PackIcon Kind="Eye" />
                                         </Button>
                                         <Button Style="{StaticResource MaterialDesignIconButton}"
-                                               Command="{Binding DataContext.ViewRecipeDetailsCommand, 
-                                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                               CommandParameter="{Binding}"
-                                               ToolTip="Voir les détails">
-                                            <materialDesign:PackIcon Kind="Eye" />
+                                              Command="{Binding DataContext.RemoveFavoriteCommand, 
+                                                       RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                              CommandParameter="{Binding}"
+                                              ToolTip="Retirer des favoris">
+                                            <materialDesign:PackIcon Kind="HeartBroken" />
                                         </Button>
                                     </StackPanel>
 
-                                    <!-- Bouton invisible pour capturer le clic sur toute la carte -->
+                                    <!-- Bouton invisible pour capter le clic général -->
                                     <Button Grid.Row="0" Grid.RowSpan="2"
                                           Command="{Binding DataContext.ViewRecipeDetailsCommand, 
                                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
