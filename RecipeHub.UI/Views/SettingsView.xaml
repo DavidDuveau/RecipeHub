@@ -80,6 +80,50 @@
                     </StackPanel>
                 </materialDesign:Card>
                 
+                <!-- Synchronisation des données -->
+                <materialDesign:Card Margin="0,0,0,20" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="SyncCircle" 
+                                                   VerticalAlignment="Center" 
+                                                   Width="24" 
+                                                   Height="24" 
+                                                   Margin="0,0,8,0"/>
+                            <TextBlock Text="Synchronisation" 
+                                     Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                        </StackPanel>
+                        
+                        <Separator Margin="0,0,0,10"/>
+                        
+                        <TextBlock Text="Synchronisez vos données entre vos appareils pour les garder à jour partout. La synchronisation nécessite une connexion internet et un compte utilisateur actif." 
+                                  Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                  TextWrapping="Wrap" 
+                                  Margin="0,0,0,10"/>
+                        
+                        <StackPanel Margin="0,0,0,10">
+                            <CheckBox Content="Activer la synchronisation automatique" 
+                                    IsChecked="{Binding SyncEnabled}" 
+                                    Margin="0,0,0,5"/>
+                            
+                            <TextBlock Margin="0,5,0,10">
+                                <Run Text="Dernière synchronisation: "/>
+                                <Run Text="{Binding LastSyncDate, TargetNullValue='Jamais', StringFormat='{}{0:g}'}"/>
+                            </TextBlock>
+                        </StackPanel>
+                        
+                        <Button Command="{Binding SynchronizeDataCommand}" 
+                               HorizontalAlignment="Right" 
+                               Style="{StaticResource MaterialDesignRaisedButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CloudSync" 
+                                                      VerticalAlignment="Center" 
+                                                      Margin="0,0,8,0"/>
+                                <TextBlock Text="Synchroniser maintenant"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </materialDesign:Card>
+                
                 <!-- Exportation et importation -->
                 <materialDesign:Card Margin="0,0,0,20" Padding="16">
                     <StackPanel>
@@ -99,6 +143,47 @@
                                   Style="{StaticResource MaterialDesignBody2TextBlock}" 
                                   TextWrapping="Wrap" 
                                   Margin="0,0,0,10"/>
+                                  
+                        <!-- Options d'exportation -->
+                        <StackPanel Margin="0,0,0,10">
+                            <CheckBox Content="Inclure les données locales" 
+                                     IsChecked="{Binding IncludeLocalData}" 
+                                     Margin="0,0,0,5"/>
+                            <CheckBox Content="Crypter le fichier d'exportation" 
+                                     IsChecked="{Binding EncryptBackup}" 
+                                     Margin="0,0,0,5"/>
+                            <StackPanel Orientation="Horizontal" 
+                                       Margin="20,0,0,0" 
+                                       Visibility="{Binding EncryptBackup, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="Mot de passe: " 
+                                         VerticalAlignment="Center" 
+                                         Margin="0,0,10,0"/>
+                                <PasswordBox x:Name="PasswordBox" 
+                                           Width="200" 
+                                           materialDesign:HintAssist.Hint="Entrez un mot de passe" 
+                                           materialDesign:TextFieldAssist.HasClearButton="True"/>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <!-- Options d'importation -->
+                        <materialDesign:Card Margin="0,0,0,10" 
+                                          Background="#F5F5F5" 
+                                          Padding="8">
+                            <StackPanel>
+                                <TextBlock Text="Stratégie d'importation:" 
+                                         Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                                         Margin="0,0,0,5"/>
+                                <ComboBox ItemsSource="{Binding ImportStrategies}" 
+                                        SelectedItem="{Binding SelectedImportStrategy}" 
+                                        Width="200" 
+                                        HorizontalAlignment="Left" 
+                                        Margin="0,0,0,5"/>
+                                <TextBlock Text="{Binding ImportStrategyDescriptions[SelectedImportStrategy]}" 
+                                         Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                         TextWrapping="Wrap" 
+                                         Opacity="0.7"/>
+                            </StackPanel>
+                        </materialDesign:Card>
                         
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Command="{Binding ImportDataCommand}" 

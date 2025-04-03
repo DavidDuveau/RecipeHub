@@ -6,6 +6,9 @@ using System.Windows;
 using Microsoft.Win32;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Controls;
 
 namespace RecipeHub.UI.ViewModels
 {
@@ -19,6 +22,12 @@ namespace RecipeHub.UI.ViewModels
         private string _statusMessage = string.Empty;
         private bool _isStatusSuccess;
         private ObservableCollection<KeyValuePair<string, int>> _statistics = new();
+        private string _selectedImportStrategy = "merge";
+        private bool _includeLocalData = true;
+        private bool _encryptBackup = false;
+        private string _backupPassword = string.Empty;
+        private bool _syncEnabled = false;
+        private DateTime? _lastSyncDate = null;
 
         /// <summary>
         /// Constructeur du ViewModel des paramètres.
@@ -32,6 +41,16 @@ namespace RecipeHub.UI.ViewModels
             BackupDatabaseCommand = new DelegateCommand(BackupDatabase);
             RestoreDatabaseCommand = new DelegateCommand(RestoreDatabase);
             RefreshStatisticsCommand = new DelegateCommand(RefreshStatistics);
+            SynchronizeDataCommand = new DelegateCommand(SynchronizeData);
+            
+            // Initialiser les stratégies d'importation disponibles
+            ImportStrategies = new ObservableCollection<string> { "merge", "replace", "keepExisting" };
+            ImportStrategyDescriptions = new Dictionary<string, string>
+            {
+                { "merge", "Fusion : Importer les nouvelles données et mettre à jour les existantes" },
+                { "replace", "Remplacer : Effacer les données existantes et les remplacer" },
+                { "keepExisting", "Conserver l'existant : N'importer que les nouvelles données" }
+            };
             
             // Charger les statistiques au démarrage
             RefreshStatistics();
@@ -61,6 +80,75 @@ namespace RecipeHub.UI.ViewModels
         /// Commande pour rafraîchir les statistiques.
         /// </summary>
         public DelegateCommand RefreshStatisticsCommand { get; }
+        
+        /// <summary>
+        /// Commande pour synchroniser les données avec le serveur.
+        /// </summary>
+        public DelegateCommand SynchronizeDataCommand { get; }
+
+        /// <summary>
+        /// Liste des stratégies d'importation disponibles.
+        /// </summary>
+        public ObservableCollection<string> ImportStrategies { get; }
+        
+        /// <summary>
+        /// Descriptions des stratégies d'importation.
+        /// </summary>
+        public Dictionary<string, string> ImportStrategyDescriptions { get; }
+        
+        /// <summary>
+        /// Stratégie d'importation sélectionnée.
+        /// </summary>
+        public string SelectedImportStrategy
+        {
+            get => _selectedImportStrategy;
+            set => SetProperty(ref _selectedImportStrategy, value);
+        }
+        
+        /// <summary>
+        /// Indique si les données locales doivent être incluses dans l'exportation.
+        /// </summary>
+        public bool IncludeLocalData
+        {
+            get => _includeLocalData;
+            set => SetProperty(ref _includeLocalData, value);
+        }
+        
+        /// <summary>
+        /// Indique si la sauvegarde doit être cryptée.
+        /// </summary>
+        public bool EncryptBackup
+        {
+            get => _encryptBackup;
+            set => SetProperty(ref _encryptBackup, value);
+        }
+        
+        /// <summary>
+        /// Mot de passe pour le cryptage de la sauvegarde.
+        /// </summary>
+        public string BackupPassword
+        {
+            get => _backupPassword;
+            set => SetProperty(ref _backupPassword, value);
+        }
+        
+        /// <summary>
+        /// Indique si la synchronisation est activée.
+        /// </summary>
+        public bool SyncEnabled
+        {
+            get => _syncEnabled;
+            set => SetProperty(ref _syncEnabled, value);
+        }
+        
+        /// <summary>
+        /// Date de la dernière synchronisation.
+        /// </summary>
+        public DateTime? LastSyncDate
+        {
+            get => _lastSyncDate;
+            set => SetProperty(ref _lastSyncDate, value);
+        }
 
         /// <summary>
         /// Indique si une opération est en cours.
@@ -118,11 +206,25 @@ namespace RecipeHub.UI.ViewModels
 
                 try
                 {
-                    bool success = await _dataSyncService.ExportUserDataToJsonAsync(dialog.FileName);
+                    bool success;
                     
-                    StatusMessage = success 
-                        ? "Exportation réussie!" 
-                        : "Erreur lors de l'exportation des données.";
+                    if (EncryptBackup && !string.IsNullOrEmpty(BackupPassword))
+                    {
+                        // Exportation cryptée
+                        success = await _dataSyncService.ExportEncryptedUserDataAsync(dialog.FileName, BackupPassword);
+                        StatusMessage = success
+                            ? "Exportation cryptée réussie!"
+                            : "Erreur lors de l'exportation cryptée des données.";
+                    }
+                    else
+                    {
+                        // Exportation standard
+                        success = await _dataSyncService.ExportUserDataToJsonAsync(dialog.FileName, IncludeLocalData);
+                        StatusMessage = success
+                            ? "Exportation réussie!"
+                            : "Erreur lors de l'exportation des données.";
+                    }
+                    
                     IsStatusSuccess = success;
                 }
                 catch (Exception ex)
@@ -165,7 +267,7 @@ namespace RecipeHub.UI.ViewModels
 
                 try
                 {
-                    var importResult = await _dataSyncService.ImportUserDataFromJsonAsync(dialog.FileName);
+                    var importResult = await _dataSyncService.ImportUserDataFromJsonAsync(dialog.FileName, SelectedImportStrategy);
                     
                     StatusMessage = importResult.Message;
                     IsStatusSuccess = importResult.Success;
@@ -174,6 +276,12 @@ namespace RecipeHub.UI.ViewModels
                     {
                         // Rafraîchir les statistiques après une importation réussie
                         RefreshStatistics();
+                        
+                        MessageBox.Show(
+                            $"Importation réussie avec la stratégie '{SelectedImportStrategy}'.",
+                            "Importation terminée",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
                     }
                 }
                 catch (Exception ex)
@@ -288,6 +396,42 @@ namespace RecipeHub.UI.ViewModels
         }
 
         /// <summary>
+        /// Synchronise les données avec le serveur distant.
+        /// </summary>
+        private async void SynchronizeData()
+        {
+            IsBusy = true;
+            StatusMessage = "Synchronisation en cours...";
+            IsStatusSuccess = false;
+
+            try
+            {
+                var syncResult = await _dataSyncService.SynchronizeDataAsync();
+                
+                StatusMessage = syncResult.Message;
+                IsStatusSuccess = syncResult.Success;
+                
+                if (syncResult.Success)
+                {
+                    // Mettre à jour la date de dernière synchronisation
+                    LastSyncDate = DateTime.Now;
+                    
+                    // Rafraîchir les statistiques après une synchronisation réussie
+                    RefreshStatistics();
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Erreur lors de la synchronisation: {ex.Message}";
+                IsStatusSuccess = false;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        /// <summary>
         /// Rafraîchit les statistiques sur les données utilisateur.
         /// </summary>
         private async void RefreshStatistics()
@@ -311,6 +455,8 @@ namespace RecipeHub.UI.ViewModels
                         "PlannedMealsCount" => "Repas planifiés",
                         "ShoppingListsCount" => "Listes de courses",
                         "ShoppingItemsCount" => "Articles de courses",
+                        "DatabaseSizeKB" => "Taille de la base de données (KB)",
+                        "LastSyncDate" => "Dernière synchronisation",
                         _ => stat.Key
                     };
                     
@@ -318,6 +464,12 @@ namespace RecipeHub.UI.ViewModels
                 }
                 
                 Statistics = formattedStats;
+                
+                // Si on a une timestamp de dernière synchronisation, la convertir en DateTime
+                if (stats.TryGetValue("LastSyncDate", out int lastSyncTimestamp) && lastSyncTimestamp > 0)
+                {
+                    LastSyncDate = DateTimeOffset.FromUnixTimeSeconds(lastSyncTimestamp).DateTime;
+                }
             }
             catch (Exception ex)
             {

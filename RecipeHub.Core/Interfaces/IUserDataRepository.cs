@@ -81,7 +81,9 @@ namespace RecipeHub.Core.Interfaces
         /// Importe les données utilisateur depuis un fichier JSON.
         /// </summary>
         /// <param name="filePath">Chemin du fichier d'import</param>
-        Task<bool> ImportUserDataAsync(string filePath);
+        /// <param name="mergeStrategy">Stratégie de fusion des données ("replace", "merge", "keepExisting")</param>
+        /// <returns>True si l'importation a réussi, False sinon</returns>
+        Task<bool> ImportUserDataAsync(string filePath, string mergeStrategy = "merge");
 
         /// <summary>
         /// Crée une sauvegarde de la base de données.
