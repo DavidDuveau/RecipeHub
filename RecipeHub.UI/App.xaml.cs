@@ -31,7 +31,7 @@ namespace RecipeHub.UI
             containerRegistry.RegisterForNavigation<HomeView>();
             containerRegistry.RegisterForNavigation<ExploreView>();
             containerRegistry.RegisterForNavigation<RecipeDetailsView>();
-            // containerRegistry.RegisterForNavigation<FavoritesView>();
+            containerRegistry.RegisterForNavigation<FavoritesView>();
             // containerRegistry.RegisterForNavigation<SearchView>();
         }
     }

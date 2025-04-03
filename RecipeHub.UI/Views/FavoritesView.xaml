@@ -1,0 +1,261 @@
+<UserControl x:Class="RecipeHub.UI.Views.FavoritesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:RecipeHub.UI.Converters"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Message d'erreur -->
+        <materialDesign:Card Grid.Row="0" 
+                           Background="#FFEBEE" 
+                           Margin="0,0,0,16" 
+                           Padding="8"
+                           Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="Alert" 
+                                       Foreground="#F44336" 
+                                       Margin="8" 
+                                       VerticalAlignment="Center" />
+                <TextBlock Text="{Binding ErrorMessage}" 
+                         Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                         Foreground="#F44336"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap" />
+            </StackPanel>
+        </materialDesign:Card>
+
+        <!-- Titre et barre de recherche -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <materialDesign:PackIcon Kind="Heart" 
+                                       Width="32" 
+                                       Height="32" 
+                                       VerticalAlignment="Center" 
+                                       Margin="0,0,16,0" />
+                <TextBlock Text="Mes recettes favorites" 
+                         Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
+                         VerticalAlignment="Center" />
+            </StackPanel>
+
+            <Button Grid.Column="1" 
+                   Command="{Binding RefreshCommand}"
+                   Style="{StaticResource MaterialDesignIconButton}"
+                   ToolTip="Rafraîchir"
+                   Margin="8,0">
+                <materialDesign:PackIcon Kind="Refresh" Width="24" Height="24" />
+            </Button>
+
+            <Button Grid.Column="2" 
+                   Command="{Binding NavigateToExploreCommand}"
+                   Style="{StaticResource MaterialDesignRaisedButton}"
+                   ToolTip="Découvrir de nouvelles recettes">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Magnify" 
+                                           Width="24" 
+                                           Height="24" 
+                                           VerticalAlignment="Center" 
+                                           Margin="0,0,8,0" />
+                    <TextBlock Text="Découvrir des recettes" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Filtres de recherche -->
+        <Grid Grid.Row="2" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Barre de recherche -->
+            <TextBox Grid.Column="0"
+                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                    materialDesign:HintAssist.Hint="Rechercher dans mes favoris..."
+                    materialDesign:TextFieldAssist.HasClearButton="True"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    VerticalAlignment="Center"
+                    Margin="0,0,16,0" />
+
+            <!-- Sélecteur de collection -->
+            <ComboBox Grid.Column="1"
+                    Width="200"
+                    ItemsSource="{Binding Collections}"
+                    SelectedItem="{Binding SelectedCollection}"
+                    materialDesign:HintAssist.Hint="Collection"
+                    Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                    VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- Liste des recettes favorites -->
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <!-- État vide -->
+                <StackPanel Visibility="{Binding HasNoFavorites, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="HeartOff" 
+                                           Width="64" 
+                                           Height="64" 
+                                           HorizontalAlignment="Center" 
+                                           Opacity="0.6" 
+                                           Margin="0,0,0,16" />
+                    <TextBlock Text="Vous n'avez pas encore de recettes favorites" 
+                             Style="{StaticResource MaterialDesignHeadline6TextBlock}" 
+                             HorizontalAlignment="Center" 
+                             Opacity="0.6" 
+                             Margin="0,0,0,8" />
+                    <TextBlock Text="Explorez des recettes et marquez-les comme favorites pour les retrouver ici"
+                             Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                             HorizontalAlignment="Center" 
+                             Opacity="0.6" 
+                             TextWrapping="Wrap" 
+                             TextAlignment="Center" 
+                             MaxWidth="400" 
+                             Margin="0,0,0,16" />
+                    <Button Command="{Binding NavigateToExploreCommand}"
+                           Style="{StaticResource MaterialDesignOutlinedButton}"
+                           HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Magnify" 
+                                                   VerticalAlignment="Center" 
+                                                   Margin="0,0,8,0" />
+                            <TextBlock Text="Explorer des recettes" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Liste des recettes -->
+                <ItemsControl ItemsSource="{Binding FavoriteRecipes}"
+                            Visibility="{Binding HasNoFavorites, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <materialDesign:Card Width="300" 
+                                               Margin="8" 
+                                               Height="320"
+                                               Cursor="Hand">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="170" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Image de la recette -->
+                                    <Image Grid.Row="0" 
+                                         Source="{Binding Thumbnail}" 
+                                         Stretch="UniformToFill" />
+
+                                    <!-- Badge de catégorie -->
+                                    <Border Grid.Row="0"
+                                          Background="#80000000"
+                                          Padding="8,4"
+                                          VerticalAlignment="Top"
+                                          HorizontalAlignment="Left"
+                                          Margin="8">
+                                        <TextBlock Text="{Binding Category}" 
+                                                 Foreground="White" 
+                                                 FontWeight="SemiBold" />
+                                    </Border>
+
+                                    <!-- Contenu principal -->
+                                    <StackPanel Grid.Row="1" Margin="16,8">
+                                        <TextBlock Text="{Binding Name}" 
+                                                 Style="{StaticResource MaterialDesignHeadline6TextBlock}" 
+                                                 TextWrapping="Wrap" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                            <materialDesign:PackIcon Kind="Earth" 
+                                                                   VerticalAlignment="Center" 
+                                                                   Margin="0,0,8,0" />
+                                            <TextBlock Text="{Binding Area}" 
+                                                     Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                                     Opacity="0.6" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding Collections}"
+                                                    Margin="0,8,0,0"
+                                                    Visibility="{Binding Collections.Count, Converter={StaticResource IntToVisibilityConverter}}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <materialDesign:Chip Content="{Binding}" 
+                                                                      Margin="2" 
+                                                                      Height="24" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <!-- Actions de la recette -->
+                                    <StackPanel Grid.Row="2" 
+                                              Orientation="Horizontal" 
+                                              HorizontalAlignment="Right" 
+                                              Margin="16,0,16,16">
+                                        <Button Style="{StaticResource MaterialDesignIconButton}"
+                                               Command="{Binding DataContext.RemoveFavoriteCommand, 
+                                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                               CommandParameter="{Binding}"
+                                               ToolTip="Retirer des favoris">
+                                            <materialDesign:PackIcon Kind="HeartOff" />
+                                        </Button>
+                                        <Button Style="{StaticResource MaterialDesignIconButton}"
+                                               Command="{Binding DataContext.ViewRecipeDetailsCommand, 
+                                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                               CommandParameter="{Binding}"
+                                               ToolTip="Voir les détails">
+                                            <materialDesign:PackIcon Kind="Eye" />
+                                        </Button>
+                                    </StackPanel>
+
+                                    <!-- Bouton invisible pour capturer le clic sur toute la carte -->
+                                    <Button Grid.Row="0" Grid.RowSpan="2"
+                                          Command="{Binding DataContext.ViewRecipeDetailsCommand, 
+                                                   RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                          CommandParameter="{Binding}"
+                                          Style="{StaticResource MaterialDesignFlatButton}"
+                                          Opacity="0" />
+                                </Grid>
+                            </materialDesign:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Indicateur de chargement -->
+        <Grid Grid.Row="0" Grid.RowSpan="4" 
+             Background="#80FFFFFF"
+             Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+             Panel.ZIndex="1000">
+            <ProgressBar IsIndeterminate="True" 
+                        Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                        Width="60" Height="60" />
+        </Grid>
+    </Grid>
+</UserControl>
