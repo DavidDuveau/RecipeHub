@@ -4,6 +4,7 @@ using Prism.Mvvm;
 using Prism.Regions;
 using RecipeHub.Core.Interfaces;
 using RecipeHub.Core.Models;
+using RecipeHub.UI.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
