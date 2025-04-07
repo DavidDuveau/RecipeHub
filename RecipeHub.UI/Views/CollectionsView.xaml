@@ -361,7 +361,7 @@
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Margin="16">
-                        <materialDesign:PackIcon Kind="EmptyFolder" 
+                        <materialDesign:PackIcon Kind="FolderOutline" 
                                                Width="96" 
                                                Height="96" 
                                                HorizontalAlignment="Center" 
