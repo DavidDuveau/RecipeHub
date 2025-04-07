@@ -1,0 +1,63 @@
+<UserControl x:Class="RecipeHub.UI.Dialogs.CreateCollectionDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Width="400" Height="200">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Titre -->
+        <TextBlock Grid.Row="0" 
+                   Text="Créer une nouvelle collection" 
+                   Style="{StaticResource MaterialDesignHeadline6TextBlock}" 
+                   Margin="0,0,0,16" />
+
+        <!-- Message d'erreur -->
+        <TextBlock Grid.Row="1" 
+                   Text="{Binding ErrorMessage}" 
+                   Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                   Foreground="#F44336"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   Margin="0,0,0,16" />
+
+        <!-- Champ de saisie -->
+        <TextBox Grid.Row="2" 
+                 Text="{Binding CollectionName, UpdateSourceTrigger=PropertyChanged}" 
+                 materialDesign:HintAssist.Hint="Nom de la collection"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 VerticalAlignment="Top" />
+
+        <!-- Boutons d'action -->
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,16,0,0">
+            <Button Command="{Binding CancelCommand}" 
+                    Style="{StaticResource MaterialDesignOutlinedButton}" 
+                    Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Cancel" 
+                                           VerticalAlignment="Center" 
+                                           Margin="0,0,8,0" />
+                    <TextBlock Text="Annuler" />
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding CreateCommand}" 
+                    Style="{StaticResource MaterialDesignRaisedButton}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ContentSave" 
+                                           VerticalAlignment="Center" 
+                                           Margin="0,0,8,0" />
+                    <TextBlock Text="Créer" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

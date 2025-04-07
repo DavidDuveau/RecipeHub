@@ -184,29 +184,50 @@
                                                      Margin="0,8,0,0">
                                     <materialDesign:PopupBox.ToggleContent>
                                         <StackPanel Orientation="Horizontal">
-                                            <materialDesign:PackIcon Kind="PlaylistAdd" 
+                                            <materialDesign:PackIcon Kind="FolderPlus" 
                                                                  VerticalAlignment="Center" 
                                                                  Margin="0,0,8,0" />
                                             <TextBlock Text="Ajouter à une collection" />
                                         </StackPanel>
                                     </materialDesign:PopupBox.ToggleContent>
                                     <StackPanel>
-                                        <Button Content="Ma collection 1" 
-                                              Command="{Binding AddToCollectionCommand}"
-                                              CommandParameter="Ma collection 1" />
-                                        <Button Content="Ma collection 2" 
-                                              Command="{Binding AddToCollectionCommand}"
-                                              CommandParameter="Ma collection 2" />
-                                        <Button Content="Ma collection 3" 
-                                              Command="{Binding AddToCollectionCommand}"
-                                              CommandParameter="Ma collection 3" />
+                                        <TextBlock Text="Sélectionnez une collection" 
+                                                 Margin="8" 
+                                                 Visibility="{Binding AvailableCollections.Count, Converter={StaticResource IntToVisibilityConverter}}" />
+                                        
+                                        <ItemsControl ItemsSource="{Binding AvailableCollections}"
+                                                    Visibility="{Binding AvailableCollections.Count, Converter={StaticResource IntToVisibilityConverter}}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding}" 
+                                                          Command="{Binding DataContext.AddToCollectionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                          CommandParameter="{Binding}" 
+                                                          Style="{StaticResource MaterialDesignFlatButton}"
+                                                          Margin="0,2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        
+                                        <TextBlock Text="Aucune collection disponible" 
+                                                 Margin="8" 
+                                                 FontStyle="Italic"
+                                                 Visibility="{Binding AvailableCollections.Count, Converter={StaticResource IntToVisibilityInverseConverter}}" />
+                                        
                                         <Separator />
-                                        <Button>
+                                        <Button Command="{Binding CreateAndAddToCollectionCommand}">
                                             <StackPanel Orientation="Horizontal">
-                                                <materialDesign:PackIcon Kind="Plus" 
+                                                <materialDesign:PackIcon Kind="FolderPlus" 
                                                                      VerticalAlignment="Center" 
                                                                      Margin="0,0,8,0" />
-                                                <TextBlock Text="Nouvelle collection" />
+                                                <TextBlock Text="Créer une nouvelle collection" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding NavigateToCollectionsCommand}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon Kind="FolderMultipleOutline" 
+                                                                     VerticalAlignment="Center" 
+                                                                     Margin="0,0,8,0" />
+                                                <TextBlock Text="Gérer mes collections" />
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>

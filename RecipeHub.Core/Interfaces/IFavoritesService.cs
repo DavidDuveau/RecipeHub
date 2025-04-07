@@ -62,5 +62,27 @@ namespace RecipeHub.Core.Interfaces
         /// <param name="collectionName">Nom de la collection</param>
         /// <returns>Liste des recettes de la collection</returns>
         Task<List<Recipe>> GetRecipesByCollectionAsync(string collectionName);
+
+        /// <summary>
+        /// Crée une nouvelle collection.
+        /// </summary>
+        /// <param name="collectionName">Nom de la collection à créer</param>
+        /// <returns>True si la création est réussie, False sinon</returns>
+        Task<bool> CreateCollectionAsync(string collectionName);
+
+        /// <summary>
+        /// Renomme une collection existante.
+        /// </summary>
+        /// <param name="oldName">Nom actuel de la collection</param>
+        /// <param name="newName">Nouveau nom de la collection</param>
+        /// <returns>True si le renommage est réussi, False sinon</returns>
+        Task<bool> RenameCollectionAsync(string oldName, string newName);
+
+        /// <summary>
+        /// Supprime une collection et ses associations avec les recettes.
+        /// </summary>
+        /// <param name="collectionName">Nom de la collection à supprimer</param>
+        /// <returns>True si la suppression est réussie, False sinon</returns>
+        Task<bool> DeleteCollectionAsync(string collectionName);
     }
 }

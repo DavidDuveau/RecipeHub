@@ -422,6 +422,165 @@ namespace RecipeHub.Services.Data
         }
 
         /// <summary>
+        /// Crée une nouvelle collection.
+        /// </summary>
+        /// <param name="collectionName">Nom de la collection à créer</param>
+        /// <returns>True si la création est réussie, False sinon</returns>
+        public async Task<bool> CreateCollectionAsync(string collectionName)
+        {
+            if (string.IsNullOrWhiteSpace(collectionName))
+                throw new ArgumentException("Le nom de la collection ne peut pas être vide.", nameof(collectionName));
+
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var transaction = connection.BeginTransaction();
+
+            try
+            {
+                // Vérifier si la collection existe déjà
+                var checkCommand = connection.CreateCommand();
+                checkCommand.Transaction = transaction;
+                checkCommand.CommandText = "SELECT COUNT(1) FROM Collections WHERE Name = @Name";
+                checkCommand.Parameters.AddWithValue("@Name", collectionName);
+
+                var count = (long)await checkCommand.ExecuteScalarAsync();
+                if (count > 0)
+                    return false; // La collection existe déjà
+
+                // Créer la collection
+                var createCommand = connection.CreateCommand();
+                createCommand.Transaction = transaction;
+                createCommand.CommandText = "INSERT INTO Collections (Name) VALUES (@Name)";
+                createCommand.Parameters.AddWithValue("@Name", collectionName);
+
+                await createCommand.ExecuteNonQueryAsync();
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Renomme une collection existante.
+        /// </summary>
+        /// <param name="oldName">Nom actuel de la collection</param>
+        /// <param name="newName">Nouveau nom de la collection</param>
+        /// <returns>True si le renommage est réussi, False sinon</returns>
+        public async Task<bool> RenameCollectionAsync(string oldName, string newName)
+        {
+            if (string.IsNullOrWhiteSpace(oldName))
+                throw new ArgumentException("Le nom actuel de la collection ne peut pas être vide.", nameof(oldName));
+
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentException("Le nouveau nom de la collection ne peut pas être vide.", nameof(newName));
+
+            if (oldName.Equals(newName, StringComparison.OrdinalIgnoreCase))
+                return true; // Pas de changement nécessaire
+
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var transaction = connection.BeginTransaction();
+
+            try
+            {
+                // Vérifier si la collection existe
+                var checkOldCommand = connection.CreateCommand();
+                checkOldCommand.Transaction = transaction;
+                checkOldCommand.CommandText = "SELECT COUNT(1) FROM Collections WHERE Name = @Name";
+                checkOldCommand.Parameters.AddWithValue("@Name", oldName);
+
+                var oldExists = (long)await checkOldCommand.ExecuteScalarAsync() > 0;
+                if (!oldExists)
+                    return false; // La collection n'existe pas
+
+                // Vérifier si le nouveau nom est déjà utilisé
+                var checkNewCommand = connection.CreateCommand();
+                checkNewCommand.Transaction = transaction;
+                checkNewCommand.CommandText = "SELECT COUNT(1) FROM Collections WHERE Name = @Name";
+                checkNewCommand.Parameters.AddWithValue("@Name", newName);
+
+                var newExists = (long)await checkNewCommand.ExecuteScalarAsync() > 0;
+                if (newExists)
+                    return false; // Le nouveau nom existe déjà
+
+                // Renommer la collection
+                var renameCommand = connection.CreateCommand();
+                renameCommand.Transaction = transaction;
+                renameCommand.CommandText = "UPDATE Collections SET Name = @NewName WHERE Name = @OldName";
+                renameCommand.Parameters.AddWithValue("@OldName", oldName);
+                renameCommand.Parameters.AddWithValue("@NewName", newName);
+
+                var rowsAffected = await renameCommand.ExecuteNonQueryAsync();
+                transaction.Commit();
+                return rowsAffected > 0;
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Supprime une collection et ses associations avec les recettes.
+        /// </summary>
+        /// <param name="collectionName">Nom de la collection à supprimer</param>
+        /// <returns>True si la suppression est réussie, False sinon</returns>
+        public async Task<bool> DeleteCollectionAsync(string collectionName)
+        {
+            if (string.IsNullOrWhiteSpace(collectionName))
+                throw new ArgumentException("Le nom de la collection ne peut pas être vide.", nameof(collectionName));
+
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var transaction = connection.BeginTransaction();
+
+            try
+            {
+                // Récupérer l'ID de la collection
+                var getIdCommand = connection.CreateCommand();
+                getIdCommand.Transaction = transaction;
+                getIdCommand.CommandText = "SELECT Id FROM Collections WHERE Name = @Name";
+                getIdCommand.Parameters.AddWithValue("@Name", collectionName);
+
+                var collectionId = await getIdCommand.ExecuteScalarAsync();
+                if (collectionId == null || collectionId == DBNull.Value)
+                    return false; // La collection n'existe pas
+
+                // Supprimer les associations avec les recettes
+                // (Grâce à la contrainte ON DELETE CASCADE, ce n'est pas strictement nécessaire,
+                // mais c'est plus explicite et sécuritaire)
+                var deleteAssociationsCommand = connection.CreateCommand();
+                deleteAssociationsCommand.Transaction = transaction;
+                deleteAssociationsCommand.CommandText = "DELETE FROM RecipeCollections WHERE CollectionId = @CollectionId";
+                deleteAssociationsCommand.Parameters.AddWithValue("@CollectionId", Convert.ToInt64(collectionId));
+                await deleteAssociationsCommand.ExecuteNonQueryAsync();
+
+                // Supprimer la collection
+                var deleteCommand = connection.CreateCommand();
+                deleteCommand.Transaction = transaction;
+                deleteCommand.CommandText = "DELETE FROM Collections WHERE Id = @CollectionId";
+                deleteCommand.Parameters.AddWithValue("@CollectionId", Convert.ToInt64(collectionId));
+
+                var rowsAffected = await deleteCommand.ExecuteNonQueryAsync();
+                transaction.Commit();
+                return rowsAffected > 0;
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Récupère les collections d'une recette.
         /// </summary>
         /// <param name="recipeId">Identifiant de la recette</param>

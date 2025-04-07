@@ -16,6 +16,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{materialDesign:MaterialDesignFont}">
     
+    <materialDesign:DialogHost Identifier="RootDialog" DialogTheme="Inherit">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -43,6 +44,8 @@
                         Command="{Binding NavigateCommand}" CommandParameter="ExploreView"/>
                     <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Favoris"
                         Command="{Binding NavigateCommand}" CommandParameter="FavoritesView"/>
+                    <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Collections"
+                        Command="{Binding NavigateCommand}" CommandParameter="CollectionsView"/>
                     <Button Style="{StaticResource MaterialDesignToolButton}" Margin="8,0,0,0" Content="Recherche"
                         Command="{Binding NavigateCommand}" CommandParameter="SearchView"/>
                 </StackPanel>
@@ -52,4 +55,5 @@
         <!-- Contenu principal -->
         <ContentControl Grid.Row="1" prism:RegionManager.RegionName="ContentRegion" Margin="16"/>
     </Grid>
+    </materialDesign:DialogHost>
 </Window>
