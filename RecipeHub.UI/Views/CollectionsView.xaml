@@ -15,6 +15,7 @@
         <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
+        <converters:StringToBooleanConverter x:Key="StringToBooleanConverter" />
     </UserControl.Resources>
 
     <Grid Margin="16">
@@ -317,7 +318,7 @@
                                  Style="{StaticResource MaterialDesignHeadline6TextBlock}" 
                                  VerticalAlignment="Center"
                                  Opacity="0.6"
-                                 Visibility="{Binding SelectedCollection, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                 Visibility="{Binding SelectedCollection, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter=inverse}" />
                     </StackPanel>
 
                     <!-- Barre de recherche -->
@@ -331,7 +332,7 @@
 
                     <!-- Pas de collection sélectionnée -->
                     <StackPanel Grid.Row="2" 
-                                Visibility="{Binding SelectedCollection, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                                Visibility="{Binding SelectedCollection, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter=inverse}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Margin="16">
@@ -360,7 +361,7 @@
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Margin="16">
-                        <materialDesign:PackIcon Kind="FolderEmpty" 
+                        <materialDesign:PackIcon Kind="EmptyFolder" 
                                                Width="96" 
                                                Height="96" 
                                                HorizontalAlignment="Center" 
